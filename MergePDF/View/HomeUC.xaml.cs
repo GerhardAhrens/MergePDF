@@ -129,7 +129,28 @@ namespace MergePDF.View
         {
             if (commandParam != null && commandParam is CommandButtons button)
             {
+                if (button == CommandButtons.PDFSplit)
+                {
+                    ChangeViewEventArgs args = new();
+                    args.MenuButton = CommandButtons.PDFSplit;
+                    args.FromPage = CommandButtons.Home;
 
+                    if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                    {
+                        await App.EventAgg.PublishAsync(args);
+                    }
+                }
+                else if (button == CommandButtons.PDFMerge)
+                {
+                    ChangeViewEventArgs args = new();
+                    args.MenuButton = CommandButtons.PDFMerge;
+                    args.FromPage = CommandButtons.Home;
+
+                    if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                    {
+                        await App.EventAgg.PublishAsync(args);
+                    }
+                }
             }
 
         }

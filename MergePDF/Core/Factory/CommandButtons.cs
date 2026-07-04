@@ -16,6 +16,8 @@
         PDFSplit = 4,
         [Description("PDF Merge")]
         PDFMerge = 5,
+        [Description("Ordner öffnen")]
+        OpenFolder = 6,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]

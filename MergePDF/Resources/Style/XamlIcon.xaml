@@ -384,6 +384,25 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
+
+    <DrawingImage x:Key="IconOffice_Folder_open_64">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <ScaleTransform ScaleX="0.25" ScaleY="0.25" />
+                </DrawingGroup.Transform>
+
+                <GeometryDrawing Brush="#FFE9DAA9" Geometry="F1M129.764,0L129.764,42.77 172.4,42.77 129.764,0z" />
+                <GeometryDrawing Brush="#FFE9DAA9" Geometry="F1M91.067,55.959L103.027,83.867 172.342,83.867 172.342,49.186 123.432,49.186 123.432,0 51.994,0C44.521,0,38.463,6.057,38.463,13.53L38.463,55.959 91.067,55.959z" />
+                <GeometryDrawing Brush="#FFA48651" Geometry="F1M153.742,68.673L98.266,68.673 98.266,64.559 153.742,64.559 153.742,68.673z" />
+                <GeometryDrawing Brush="#FFA48651" Geometry="F1M153.742,81.017L108.252,81.017 108.252,76.902 153.742,76.902 153.742,81.017z" />
+                <GeometryDrawing Brush="#FFDDC185" Geometry="F1M210.863,223.256C210.863,230.675,204.847,236.691,197.425,236.691L13.438,236.691C6.017,236.691,0,230.675,0,223.256L0,105.305C0,97.883,6.017,91.867,13.438,91.867L197.425,91.867C204.847,91.867,210.863,97.883,210.863,105.305L210.863,223.256z" />
+                <GeometryDrawing Brush="#FF478EAF" Geometry="F1M95.095,85.666L24.291,85.666 33.594,63.959 85.792,63.959 95.095,85.666z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
     <!--#endregion Farbige Icon Symbole auf Basis von DrawingImage-->
 
     <!--#region Statuszeile-->

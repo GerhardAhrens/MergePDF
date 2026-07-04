@@ -20,6 +20,8 @@ namespace MergePDF.View
 
     using MergePDF.Core;
 
+    using Microsoft.Win32;
+
     /// <summary>
     /// Interaktionslogik für PDFMergeView.xaml
     /// </summary>
@@ -34,13 +36,16 @@ namespace MergePDF.View
             this.CurrentCtorArgs = args;
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
+            this.OpenFolderCommand = new CommandBase(commandParam => this.OnOpenFolder(commandParam), () => true);
 
             this.DataContext = this;
         }
 
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
+        public CommandBase OpenFolderCommand { get; private set; }
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
+        private string SelectedFolderPath { get; set; }
 
         #endregion Properties
 
@@ -72,6 +77,17 @@ namespace MergePDF.View
                 }
             }
         }
+        private async void OnOpenFolder(object commandParam)
+        {
+            OpenFolderDialog dlg = new OpenFolderDialog();
+            dlg.Title = "Ordner auswählen";
+            dlg.AddToRecent = true;
+            if (dlg.ShowDialog() == true)
+            {
+                this.SelectedFolderPath = dlg.SafeFolderName;
+            }
+        }
+
         #endregion Command Events
 
     }

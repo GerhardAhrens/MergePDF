@@ -159,9 +159,8 @@ namespace MergePDF.View
                     {
                         this.OnQuit();
                     }
-                    else if (button.In(CommandButtons.Home, CommandButtons.GoBack))
+                    else if (button.In(CommandButtons.Home, CommandButtons.GoBack, CommandButtons.PDFMerge, CommandButtons.PDFSplit))
                     {
-
                         if (App.EventAgg.IsSubscription<WindowsTitelEvent>() == true)
                         {
                             await App.EventAgg.PublishAsync(new WindowsTitelEvent(button.ToDescription()));
@@ -188,6 +187,8 @@ namespace MergePDF.View
         private void RegisterFactory()
         {
             Factory.RegisterSingleton<CommandButtons>(CommandButtons.Home, () => new HomeUC());
+            Factory.RegisterTransient<CommandButtons>(CommandButtons.PDFMerge, (param) => new PDFMergeView((ChangeViewEventArgs)param!));
+            Factory.RegisterTransient<CommandButtons>(CommandButtons.PDFSplit, (param) => new PDFSplitView((ChangeViewEventArgs)param!));
         }
     }
 }
