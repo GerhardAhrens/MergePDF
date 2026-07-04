@@ -1,14 +1,14 @@
 <base:UserControlBase
-    x:Class="MinimalWPF.View.HomeUC"
+    x:Class="MergePDF.View.HomeUC"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:base="clr-namespace:System.Windows"
-    xmlns:core="clr-namespace:MinimalWPF.Core"
+    xmlns:core="clr-namespace:MergePDF.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MinimalWPF.View"
+    xmlns:local="clr-namespace:MergePDF.View"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
-    xmlns:views="clr-namespace:MinimalWPF.View"
+    xmlns:views="clr-namespace:MergePDF.View"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -119,13 +119,31 @@
 
                 <Separator Margin="5,0,0,0" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
-
                 <Button
-                    Grid.Column="1"
+                    Grid.Column="0"
                     Width="{StaticResource ResourceKey=ButtonSize}"
                     Height="{StaticResource ResourceKey=ButtonSize}"
                     Margin="5,0,0,0"
-                    Content="Button&#x0a;Links 2" />
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Command="{Binding Path=MergePDFCommand}"
+                    CommandParameter="{x:Static core:CommandButtons.PDFMerge}"
+                    ToolTip="Mehrere PDF Dateien zusammenführen">
+                    <Image Source="{StaticResource ResourceKey=PdfMergeIcon}" Stretch="Uniform" />
+                </Button>
+
+                <Button
+                    Grid.Column="0"
+                    Width="{StaticResource ResourceKey=ButtonSize}"
+                    Height="{StaticResource ResourceKey=ButtonSize}"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Command="{Binding Path=SplitPDFCommand}"
+                    CommandParameter="{x:Static core:CommandButtons.PDFSplit}"
+                    ToolTip="PDF Dateien teilen">
+                    <Image Source="{StaticResource ResourceKey=PdfSplitIcon}" Stretch="Uniform" />
+                </Button>
 
                 <!--  Rechte Buttons (müssen zuerst im DockPanel definiert werden, damit die Reihenfolge stimmt)  -->
                 <Button
@@ -170,9 +188,9 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             FontSize="28"
-            TextWrapping="WrapWithOverflow"
             FontWeight="Bold"
-            Text="{Binding Path=WindowTitel, FallbackValue=~WindowTitel}" />
+            Text="{Binding Path=WindowTitel, FallbackValue=~WindowTitel}"
+            TextWrapping="WrapWithOverflow" />
 
     </Grid>
 </base:UserControlBase>

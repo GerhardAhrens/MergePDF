@@ -24,7 +24,7 @@ namespace MergePDF
     using System.Windows.Markup;
     using System.Windows.Threading;
 
-    using MinimalWPF.Core;
+    using MergePDF.Core;
 
     /// <summary>
     /// Interaction logic for App.xaml

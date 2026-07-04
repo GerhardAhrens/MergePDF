@@ -18,9 +18,21 @@
                     <ScaleTransform ScaleX="0.25" ScaleY="0.25" />
                 </DrawingGroup.Transform>
 
-                <GeometryDrawing Brush="#FFADACB3" Geometry="F1M14.664,151.738L198.916,151.738C205.606,151.738,211.032,146.312,211.032,139.625L211.032,12.114C211.032,5.423,205.606,0,198.916,0L14.664,0C7.973,0,2.55,5.423,2.55,12.114L2.55,139.625C2.55,146.312,7.973,151.738,14.664,151.738z" />
-                <GeometryDrawing Brush="#FF1388B1" Geometry="F1M19.558,28.379C19.558,23.8,24.095,20.087,29.693,20.087L183.88,20.087C189.479,20.087,194.018,23.8,194.018,28.379L194.018,115.659C194.018,120.236,189.479,123.949,183.88,123.949L29.693,123.949C24.095,123.949,19.558,120.236,19.558,115.659L19.558,28.379z" />
-                <GeometryDrawing Brush="#FFADACB3" Geometry="F1M189.449,188.078L124.303,188.078C120.822,188.078 118,185.255 118,181.775 118,178.294 120.822,175.468 124.303,175.468L189.449,175.468C192.93,175.468 195.752,178.294 195.752,181.775 195.752,185.255 192.93,188.078 189.449,188.078z M201.469,160.432L12.114,160.432C5.425,160.432,0,165.854,0,172.544L0,216.538C0,223.224,5.425,228.65,12.114,228.65L201.469,228.65C208.159,228.65,213.58,223.224,213.58,216.538L213.58,172.544C213.58,165.854,208.159,160.432,201.469,160.432z" />
+                <GeometryDrawing Brush="#FF478EAF" Geometry="F1M212.119,234.528L201.849,234.528 201.849,226.826 212.119,226.826 212.119,234.528z M204.302,77.648L134.74,77.648 134.74,133.463C134.74,144.937,125.406,154.271,113.934,154.271L56.01,154.271 56.01,235.298C56.01,239.545,59.465,243,63.712,243L213.659,243C217.906,243,221.361,239.545,221.361,235.298L221.361,94.708 204.302,77.648z" />
+                <GeometryDrawing Brush="#FFE8E8E9" Geometry="F1M192.646,227.339L84.725,227.339 84.725,156.346 192.646,156.346 192.646,227.339z" />
+                <GeometryDrawing Brush="#FFCED0D1" Geometry="F1M134.74,77.648L134.74,133.463C134.74,136.599,134.022,139.563,132.775,142.233L182.699,142.233C188.655,142.233,193.483,137.406,193.483,131.449L193.483,77.648 134.74,77.648z" />
+                <GeometryDrawing Brush="#FF478EAF" Geometry="F1M172.43,125.662L172.43,85.993 149.32,85.993 149.32,125.662 172.43,125.662z" />
+                <GeometryDrawing Brush="#FF7F7F7F" Geometry="F1M184.561,175.217L93.325,175.217 93.325,172.137 184.561,172.137 184.561,175.217z" />
+                <GeometryDrawing Brush="#FF7F7F7F" Geometry="F1M184.561,187.542L93.325,187.542 93.325,184.461 184.561,184.461 184.561,187.542z" />
+                <GeometryDrawing Brush="#FF7F7F7F" Geometry="F1M184.561,199.866L93.325,199.866 93.325,196.785 184.561,196.785 184.561,199.866z" />
+                <GeometryDrawing Brush="#FF7F7F7F" Geometry="F1M184.561,212.19L93.325,212.19 93.325,209.109 184.561,209.109 184.561,212.19z" />
+                <GeometryDrawing Brush="#FFE9DAA9" Geometry="F1M80.439,46.561L80.439,0 12.807,0C5.732,0,0,5.731,0,12.806L0,133.463C0,140.539,5.732,146.271,12.807,146.271L113.934,146.271C121.006,146.271,126.74,140.539,126.74,133.463L126.74,46.561 80.439,46.561z" />
+                <GeometryDrawing Brush="#FFD34E1E" Geometry="F1M77.742,43.981L10.327,43.981 10.327,16.458 77.742,16.458 77.742,43.981z" />
+                <GeometryDrawing Brush="#FFD34E1E" Geometry="F1M61.759,63.329C61.602,63.329 61.306,63.363 61.101,63.601 60.818,63.923 60.723,64.58 60.838,65.401 61.189,67.914 61.557,70.246 61.944,72.411 63,68.33 63.063,65.85 62.819,64.363 62.673,63.462 62.091,63.329 61.759,63.329z M53.59,106.679L52.605,108.373C56.707,107.243 61.09,106.405 64.93,105.674 66.076,105.456 67.155,105.25 68.137,105.05 69.102,104.856 70.283,104.65 71.604,104.44L71.344,104.283 72.132,104.196C68.766,101.556 65.872,98.756 63.776,96.077 62.865,94.912 62.015,93.514 61.218,91.868L60.869,92.722 60.765,92.363C58.676,96.8,56.212,101.618,53.382,106.785L53.59,106.679z M91.986,108.48C93.753,109.071 95.316,109.412 96.56,109.455 96.701,109.46 96.84,109.463 96.976,109.463 98.381,109.463 99.27,109.208 99.77,108.971 99.567,108.883 99.298,108.793 98.94,108.718 98.306,108.586 97.04,108.428 94.614,108.428 93.809,108.428 92.93,108.445 91.986,108.48z M36.848,123.021C31.178,127.023 30.656,128.971 30.61,129.252 30.524,129.771 30.606,130.033 30.66,130.098 30.723,130.172 30.948,130.283 31.303,130.283L31.303,130.283C31.729,130.283 32.341,130.104 32.676,129.604 33.138,128.908 34.695,126.498 36.848,123.021z M31.304,136.373L31.303,136.373C29.202,136.373 27.274,135.521 26.016,134.037 24.735,132.527 24.235,130.477 24.602,128.26 25.083,125.348 27.577,120.488 43.544,111.839 49.819,100.994 54.84,91.174 58.128,83.314 56.439,77.204 55.429,70.698 54.804,66.243 54.441,63.639 55.046,61.28 56.504,59.602 57.812,58.1 59.729,57.238 61.759,57.238 65.332,57.238 68.238,59.766 68.831,63.38 69.577,67.952 68.183,74.587 64.571,83.646 65.785,87.562 67.131,90.479 68.575,92.324 71.4,95.938 75.988,99.863 81.263,103.189 86.458,102.637 91.166,102.335 94.614,102.335 97.013,102.335 98.836,102.475 100.188,102.757 104.771,103.716 106.544,106.829 106.269,109.489 105.956,112.509 102.961,115.554 96.976,115.554 96.771,115.554 96.563,115.55 96.35,115.541 92.148,115.396 86.184,113.195 79.867,109.471 75.751,109.945 71.786,110.53 69.34,111.022 68.342,111.225 67.24,111.434 66.072,111.657 60.432,112.733 52.814,114.187 47.907,116.451 42.219,126.186 37.787,132.918 37.745,132.979 36.329,135.105 33.921,136.373 31.304,136.373z" />
+                <GeometryDrawing Brush="#FFF8EEDF" Geometry="F1M27.106,29.791C27.877,29.791 28.508,29.574 29.001,29.142 29.492,28.709 29.739,28.15 29.739,27.465 29.739,26.427 29.388,25.714 28.688,25.33 28.177,25.054 27.351,24.916 26.209,24.916L24.25,24.916 24.25,29.791 27.106,29.791z M20.39,21.776L27.413,21.776C29.42,21.776 30.954,22.261 32.016,23.229 33.079,24.195 33.609,25.597 33.609,27.431 33.609,28.831 33.225,30.015 32.453,30.983 31.374,32.321 29.51,32.989 26.859,32.989 27.095,32.989 26.226,32.962 24.25,32.907L24.25,38.832 20.39,38.832 20.39,21.776z" />
+                <GeometryDrawing Brush="#FFF8EEDF" Geometry="F1M42.943,35.669C44.762,35.669 46.032,35.185 46.756,34.218 47.377,33.39 47.688,32.037 47.688,30.158 47.688,28.355 47.305,27.043 46.537,26.221 45.771,25.397 44.561,24.986 42.908,24.986L41.138,24.986 41.138,35.669 42.943,35.669z M37.326,21.789L43.31,21.789C45.984,21.789 48.061,22.531 49.536,24.02 51.011,25.507 51.749,27.592 51.749,30.274 51.749,33.006 51.018,35.118 49.553,36.613 48.09,38.108 46.024,38.855 43.356,38.855L37.326,38.855 37.326,21.789z" />
+                <GeometryDrawing Brush="#FFF8EEDF" Geometry="F1M55.854,21.776L68.364,21.776 68.364,24.964 59.666,24.964 59.666,28.635 67.302,28.635 67.302,31.656 59.666,31.656 59.666,38.832 55.854,38.832 55.854,21.776z" />
+                <GeometryDrawing Brush="#FFE9DAA9" Geometry="F1M86.432,0L86.432,40.486 126.795,40.486 86.432,0z" />
 
             </DrawingGroup>
         </DrawingImage.Drawing>
@@ -107,6 +119,271 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
+    <DrawingImage x:Key="IconGoBack">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#FF4A90E2">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <GeometryGroup.Children>
+                                    <PathGeometry Figures="M8,9L12,5L16,9z" />
+                                    <RectangleGeometry Rect="9,9,6,6" />
+                                </GeometryGroup.Children>
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFFFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="11,11,2,4" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FF7FB3FF">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M20,12L6,12 M9,8L4,12L9,16L7.5,12z" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFBFD9FF">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <GeometryGroup.Children>
+                                    <RectangleGeometry Rect="17,6,5,1.2" />
+                                    <RectangleGeometry Rect="17,9,4,1.2" />
+                                    <RectangleGeometry Rect="17,15,5,1.2" />
+                                    <RectangleGeometry Rect="17,18,4,1.2" />
+                                </GeometryGroup.Children>
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="PdfMergeIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+
+                <!--  Linkes Dokument  -->
+                <GeometryDrawing Brush="White" Pen="{x:Null}">
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M2,5
+                            L8,5
+                            L10,7
+                            L10,21
+                            L2,21 Z
+                            M8,5
+                            L8,7
+                            L10,7
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Mittleres Dokument  -->
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#606060" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M8,2
+                            L15,2
+                            L17,4
+                            L17,22
+                            L8,22 Z
+                            M15,2
+                            L15,4
+                            L17,4
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Rechtes Dokument  -->
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#606060" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M16,5
+                            L22,5
+                            L24,7
+                            L24,21
+                            L16,21 Z
+                            M22,5
+                            L22,7
+                            L24,7
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  PDF Balken  -->
+                <GeometryDrawing Brush="#D32F2F">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="2,5,8,3" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <GeometryDrawing Brush="#D32F2F">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="8,2,9,3" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <GeometryDrawing Brush="#D32F2F">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="16,5,8,3" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Linker Pfeil  -->
+                <GeometryDrawing Brush="#1976D2">
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M6,14
+                            L10,14
+                            L8.5,12.5
+                            L12,16
+                            L8.5,19.5
+                            L10,18
+                            L6,18 Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Rechter Pfeil  -->
+                <GeometryDrawing Brush="#1976D2">
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M20,14
+                            L16,14
+                            L17.5,12.5
+                            L14,16
+                            L17.5,19.5
+                            L16,18
+                            L20,18 Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="PdfSplitIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+
+                <!--  Linkes Dokument  -->
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#606060" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M2,5
+                            L8,5
+                            L10,7
+                            L10,21
+                            L2,21 Z
+                            M8,5
+                            L8,7
+                            L10,7
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Mittleres Dokument  -->
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#606060" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M8,2
+                            L15,2
+                            L17,4
+                            L17,22
+                            L8,22 Z
+                            M15,2
+                            L15,4
+                            L17,4
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Rechtes Dokument  -->
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#606060" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M16,5
+                            L22,5
+                            L24,7
+                            L24,21
+                            L16,21 Z
+                            M22,5
+                            L22,7
+                            L24,7
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  PDF Balken  -->
+                <GeometryDrawing Brush="#D32F2F">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="2,5,8,3" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <GeometryDrawing Brush="#D32F2F">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="8,2,9,3" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <GeometryDrawing Brush="#D32F2F">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="16,5,8,3" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Linker Pfeil  -->
+                <GeometryDrawing Brush="#1976D2">
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M12,14
+                            L8,14
+                            L9.5,12.5
+                            L6,16
+                            L9.5,19.5
+                            L8,18
+                            L12,18 Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Rechter Pfeil  -->
+                <GeometryDrawing Brush="#1976D2">
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M14,14
+                            L18,14
+                            L16.5,12.5
+                            L20,16
+                            L16.5,19.5
+                            L18,18
+                            L14,18 Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
     <!--#endregion Farbige Icon Symbole auf Basis von DrawingImage-->
 
     <!--#region Statuszeile-->

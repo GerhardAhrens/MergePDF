@@ -20,8 +20,8 @@ namespace MergePDF.View
     using System.Windows.Controls;
     using System.Windows.Input;
 
-    using MinimalWPF.Core;
-    using MinimalWPF.View;
+    using MergePDF.Core;
+    using MergePDF.View;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml

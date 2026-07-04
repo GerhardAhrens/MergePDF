@@ -13,7 +13,7 @@
 // </summary>
 //-----------------------------------------------------------------------
 
-namespace MinimalWPF.Core
+namespace MergePDF.Core
 {
     public partial class ChangeViewEventArgs : System.EventArgs
     {

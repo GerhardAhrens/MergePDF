@@ -1,11 +1,11 @@
-﻿namespace MinimalWPF.View
+﻿namespace MergePDF.View
 {
     using System.Windows;
     using System.Windows.Controls;
 
     using MergePDF;
 
-    using MinimalWPF.Core;
+    using MergePDF.Core;
 
     /// <summary>
     /// Interaktionslogik für SettingsUC.xaml

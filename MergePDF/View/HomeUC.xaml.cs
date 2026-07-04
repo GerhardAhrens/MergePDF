@@ -13,14 +13,14 @@
 // </summary>
 //-----------------------------------------------------------------------
 
-namespace MinimalWPF.View
+namespace MergePDF.View
 {
     using System.Windows;
     using System.Windows.Controls;
 
     using MergePDF;
 
-    using MinimalWPF.Core;
+    using MergePDF.Core;
 
     /// <summary>
     /// Interaktionslogik für HomeUC.xaml
@@ -34,6 +34,8 @@ namespace MinimalWPF.View
             WeakEventManager<UserControl, RoutedEventArgs>.AddHandler(this, "Loaded", this.OnLoaded);
 
             this.QuitCommand = new CommandBase(commandParam => this.OnQuit(commandParam), () => true);
+            this.MergePDFCommand = new CommandBase(commandParam => this.ChangeView(commandParam), () => true);
+            this.SplitPDFCommand = new CommandBase(commandParam => this.ChangeView(commandParam), () => true);
 
             this.InformationCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
             this.SettingsCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
@@ -45,6 +47,8 @@ namespace MinimalWPF.View
 
         #region Properties
         public CommandBase QuitCommand { get; private set; }
+        public CommandBase MergePDFCommand { get; private set; }
+        public CommandBase SplitPDFCommand { get; private set; }
 
         public CommandBase InformationCommand { get; private set; }
         public CommandBase SettingsCommand { get; private set; }
@@ -120,6 +124,15 @@ namespace MinimalWPF.View
             }
         }
 
+
+        private async void ChangeView(object commandParam)
+        {
+            if (commandParam != null && commandParam is CommandButtons button)
+            {
+
+            }
+
+        }
         #endregion Command Events
 
     }

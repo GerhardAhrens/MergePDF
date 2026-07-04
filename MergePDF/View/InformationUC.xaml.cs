@@ -1,4 +1,4 @@
-﻿namespace MinimalWPF.View
+﻿namespace MergePDF.View
 {
     using System.Diagnostics;
     using System.IO;

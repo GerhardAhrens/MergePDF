@@ -1,4 +1,4 @@
-﻿namespace MinimalWPF.Core
+﻿namespace MergePDF.Core
 {
     using System.ComponentModel;
 
