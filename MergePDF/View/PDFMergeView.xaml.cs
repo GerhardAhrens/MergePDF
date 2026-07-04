@@ -15,12 +15,17 @@
 
 namespace MergePDF.View
 {
+    using System.ComponentModel;
+    using System.IO;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Data;
 
     using MergePDF.Core;
 
     using Microsoft.Win32;
+
+    using SnippetManager.Core;
 
     /// <summary>
     /// Interaktionslogik für PDFMergeView.xaml
@@ -44,8 +49,20 @@ namespace MergePDF.View
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase OpenFolderCommand { get; private set; }
+
+        public ICollectionView PDFFilesSource
+        {
+            get => base.GetValue<ICollectionView>();
+            set => base.SetValue(value);
+        }
+
+        public PDFFileItem SelectedPdfFile
+        {
+            get => base.GetValue<PDFFileItem>();
+            set => base.SetValue(value, this.SelectedPdfFileHandler);
+        }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
-        private string SelectedFolderPath { get; set; }
 
         #endregion Properties
 
@@ -84,11 +101,37 @@ namespace MergePDF.View
             dlg.AddToRecent = true;
             if (dlg.ShowDialog() == true)
             {
-                this.SelectedFolderPath = dlg.SafeFolderName;
+                string selectedFolderPath = dlg.FolderName;
+                LoadFileToListbox(selectedFolderPath);
             }
         }
 
         #endregion Command Events
 
+        private void LoadFileToListbox(string folderPath)
+        {
+            PDFFileItem fitem;
+            List<PDFFileItem> files = new();
+            IEnumerable<string> filesFolder = Directory.EnumerateFiles(folderPath, "*.pdf", SearchOption.AllDirectories);
+            if (filesFolder != null && filesFolder.Any() == true)
+            {
+                int order = 1;
+                foreach (string file in filesFolder)
+                {
+                    fitem = new PDFFileItem();
+                    fitem.Fullname = file;
+                    fitem.Filename = Path.GetFileName(file);
+                    fitem.Order = order++;
+                    fitem.IsSelectedItem = false;
+                    files.Add(fitem);
+                }
+
+                this.PDFFilesSource = CollectionViewSource.GetDefaultView(files.OrderBy(f => f.Order));
+            }
+        }
+
+        private void SelectedPdfFileHandler(PDFFileItem item, string arg2)
+        {
+        }
     }
 }

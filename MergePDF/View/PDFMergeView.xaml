@@ -67,7 +67,22 @@
 
             </DockPanel>
         </GroupBox>
-
         <!--#endregion Hauptmenübar-->
+
+        <Grid
+            Grid.Row="1"
+            Grid.Column="0"
+            ColumnDefinitions="Auto,*"
+            RowDefinitions="*">
+            <ListBox
+                x:Name="listBoxFiles"
+                Grid.Row="0"
+                Grid.Column="0"
+                Width="300"
+                Margin="5"
+                DisplayMemberPath="Filename"
+                ItemsSource="{Binding Path=PDFFilesSource}"
+                SelectedItem="{Binding Path=SelectedPdfFile, Mode=TwoWay}" />
+        </Grid>
     </Grid>
 </base:UserControlBase>
