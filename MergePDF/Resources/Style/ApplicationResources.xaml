@@ -1,0 +1,46 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <DataTemplate x:Key="MyCustomTooltipTemplate">
+        <StackPanel MaxWidth="250" Margin="10">
+            <TextBlock
+                Margin="0,0,0,5"
+                FontSize="14"
+                FontWeight="Bold"
+                Foreground="#333333"
+                Text="Hilfe" />
+            <TextBlock
+                Foreground="#666666"
+                Text="{Binding}"
+                TextWrapping="Wrap" />
+        </StackPanel>
+    </DataTemplate>
+
+    <!--  HIER: Kein x:Key mehr, dadurch gilt es überall implizit  -->
+    <Style TargetType="{x:Type ToolTip}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="ToolTipService.ShowDuration" Value="2000" />
+        <Setter Property="ContentTemplate" Value="{StaticResource MyCustomTooltipTemplate}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <Border
+                        Padding="5"
+                        Background="#F9F9F9"
+                        BorderBrush="#CCCCCC"
+                        BorderThickness="1"
+                        CornerRadius="6">
+                        <Border.Effect>
+                            <DropShadowEffect
+                                BlurRadius="8"
+                                Opacity="0.25"
+                                ShadowDepth="2"
+                                Color="Black" />
+                        </Border.Effect>
+                        <ContentPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
