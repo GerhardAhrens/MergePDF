@@ -1,4 +1,4 @@
-﻿namespace SnippetManager.Core
+﻿namespace MergePDF.Core
 {
     using System.ComponentModel;
     using System.Diagnostics;
@@ -10,6 +10,7 @@
         private int order;
         private string fullname;
         private string filename;
+        private string fileSize;
         private bool isSelectedItem;
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -47,6 +48,19 @@
                 if (this.filename != value)
                 {
                     this.filename = value;
+                    this.OnPropertyChanged();
+                }
+            }
+        }
+
+        public string FileSize
+        {
+            get => this.fileSize;
+            set
+            {
+                if (this.fileSize != value)
+                {
+                    this.fileSize = value;
                     this.OnPropertyChanged();
                 }
             }

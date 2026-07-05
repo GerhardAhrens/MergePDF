@@ -22,7 +22,13 @@
         InformationPopup = 20,
         [Description("Einstellungen")]
         SettingsPopup = 21,
-        [Description("Zurück zur vorherigen Seite")]
+        [Description("Zurück zur vorherigen Dialog")]
         GoBack = 22,
+        [Description("Eine Seite weiter")]
+        PlusPage = 23,
+        [Description("Eine Seite zurück")]
+        MinusPage = 24,
+        [Description("PDF speichern")]
+        SavePDF = 25,
     }
 }
