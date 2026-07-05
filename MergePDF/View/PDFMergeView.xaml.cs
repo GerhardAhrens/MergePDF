@@ -29,6 +29,9 @@ namespace MergePDF.View
 
     using PDFiumCore;
 
+    using PdfSharpCore.Pdf;
+    using PdfSharpCore.Pdf.IO;
+
     /// <summary>
     /// Interaktionslogik für PDFMergeView.xaml
     /// </summary>
@@ -95,6 +98,18 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
+        public string MergeFilename
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
+        public string PDFPageInfo
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
 
         #endregion Properties
@@ -117,6 +132,9 @@ namespace MergePDF.View
             {
                 if (button == CommandButtons.GoBack)
                 {
+                    // 4. Bibliothek sauber schließen (am Ende des Programms)
+                    fpdfview.FPDF_DestroyLibrary();
+
                     ChangeViewEventArgs args = new();
                     args.MenuButton = this.CurrentCtorArgs.FromPage;
                     args.FromPage = this.CurrentCtorArgs.MenuButton;
@@ -164,6 +182,23 @@ namespace MergePDF.View
 
         private void OnSavePDF(object commandParam)
         {
+            string mergePath = string.Empty;
+            if (string.IsNullOrEmpty(this.MergeFilename) == true)
+            {
+                return;
+            }
+
+            /*
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Title = "PDF-Datei speichern";
+            dlg.Filter = "PDF-Dateien (*.pdf)|*.pdf";
+            dlg.DefaultExt = ".pdf";
+            if (dlg.ShowDialog() == true)
+            {
+                this.MergeFilename = dlg.FileName;
+            }
+            */
+
             if (commandParam != null && commandParam is CommandButtons button)
             {
                 if (button == CommandButtons.SavePDF)
@@ -171,7 +206,40 @@ namespace MergePDF.View
                     var selectedFile = this.PDFFilesSource.Where(f => f.IsSelectedItem == true).ToList();
                     if (selectedFile != null && selectedFile.Count > 0)
                     {
+                        this.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Wait);
 
+                        using (var targetDoc = new PdfDocument())
+                        {
+                            foreach (var file in selectedFile)
+                            {
+                                string pdfname = file.Fullname;
+                                mergePath = Path.GetDirectoryName(pdfname);
+
+                                if (File.Exists(pdfname) == false)
+                                {
+                                    continue;
+                                }
+
+                                // Quelldatei im Import-Modus öffnen
+                                using (var pdfDoc = PdfReader.Open(pdfname, PdfDocumentOpenMode.Import))
+                                {
+                                    // Alle Seiten des Dokuments durchgehen
+                                    for (var i = 0; i < pdfDoc.PageCount; i++)
+                                    {
+                                        // Seite importieren und dem Zieldokument hinzufügen
+                                        targetDoc.AddPage(pdfDoc.Pages[i]);
+                                    }
+                                }
+                            }
+
+                            // Zusammengeführte Datei speichern
+                            string fullMergeName = Path.Combine(mergePath, Path.ChangeExtension(this.MergeFilename, ".pdf"));
+                            targetDoc.Save(fullMergeName);
+                        }
+
+                        this.Dispatcher.Invoke(() => Mouse.OverrideCursor = null);
+
+                        this.LoadFileToListbox(mergePath);
                     }
 
                 }
@@ -180,6 +248,7 @@ namespace MergePDF.View
 
         #endregion Command Events
 
+        #region Laden der PDF Dateien zum Rendern
         private async void LoadFileToListbox(string folderPath)
         {
             PDFFileItem fitem;
@@ -189,7 +258,7 @@ namespace MergePDF.View
             {
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                 {
-                    await App.EventAgg.PublishAsync(new StatusEvent($"Verzeichnis: {folderPath}"));
+                    await App.EventAgg.PublishAsync(new StatusEvent($"{folderPath}", "{folderPath}"));
                 }
 
                 int order = 1;
@@ -355,6 +424,7 @@ namespace MergePDF.View
             this.LeftArrow.Visibility = Visibility.Collapsed;
             this.RightArrow.Visibility = Visibility.Collapsed;
         }
+        #endregion Laden der PDF Dateien zum Rendern
 
         #region Image from PDF
         private void LoadPdf(string fileName)
@@ -362,16 +432,13 @@ namespace MergePDF.View
             this._document = fpdfview.FPDF_LoadDocument(fileName, null);
             string titel = Path.GetFileName(fileName);
 
-            ulong len = fpdf_doc.FPDF_GetMetaText(this._document, titel, 0, 0);
-            byte[] buffer = new byte[len];
-
-            fpdf_doc.FPDF_GetMetaText(this._document, titel, buffer.Length, len);
-
+            _ = fpdf_doc.FPDF_GetMetaText(this._document, titel, 0, 0);
             if (this._document == null)
             {
                 throw new Exception("PDF konnte nicht geladen werden.");
             }
 
+            this.PDFPageInfo = $"{fpdfview.FPDF_GetPageCount(this._document)}";
             this._currentPage = 0;
             this.RenderPage();
         }

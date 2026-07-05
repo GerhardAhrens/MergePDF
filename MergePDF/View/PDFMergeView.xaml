@@ -109,6 +109,12 @@
                     Margin="5,0,0,0"
                     ResultSelection="{Binding Path=SelectionZoom, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
+                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                    <Run Text="Anzahl Seiten" />
+                    <Run Text=":" />
+                    <Run Text="{Binding Path=PDFPageInfo, FallbackValue=0}" />
+                </TextBlock>
+
                 <Border
                     Width="1"
                     Margin="5,0,0,0"
@@ -137,6 +143,18 @@
                     ToolTip="Ordner öffnen">
                     <Image Source="{StaticResource ResourceKey=IconSoftware_Minus2}" Stretch="Uniform" />
                 </Button>
+
+                <Border
+                    Width="1"
+                    Margin="5,0,0,0"
+                    Background="Gray" />
+
+                <TextBox
+                    Width="200"
+                    Height="25"
+                    Margin="5,0,0,0"
+                    VerticalContentAlignment="Center"
+                    Text="{Binding Path=MergeFilename, FallbackValue=MergeFilename}" />
 
                 <Button
                     Width="{StaticResource ResourceKey=ButtonSize}"

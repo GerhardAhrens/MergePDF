@@ -8,12 +8,14 @@
 # Projekt
 Das Projekt dient dazu, PDF Dateien zu splitten und zusammenzufügen.
 
-![Demodaten](MainWindow.png)
+![Hauptdialog](MainWindow.png)
 
 ## Splitten von PDF Dateien
 
 
 ## Zusammenführen von PDF Dateien
+
+![Merge Dialog](MergePDFView.png)
 
 # zusätzliche NuGet-Pakete
 In der Anwendung/Demo werden folgende zusätzliche Pakete verwendet
