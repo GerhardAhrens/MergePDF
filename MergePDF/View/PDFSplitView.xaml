@@ -53,6 +53,23 @@
                     <Image Source="{StaticResource ResourceKey=IconGoBack}" Stretch="Uniform" />
                 </Button>
 
+                <Border
+                    Width="1"
+                    Margin="5,0,0,0"
+                    Background="Gray" />
+
+                <Button
+                    Width="{StaticResource ResourceKey=ButtonSize}"
+                    Height="{StaticResource ResourceKey=ButtonSize}"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Command="{Binding Path=OpenFolderCommand}"
+                    CommandParameter="{x:Static core:CommandButtons.OpenFolder}"
+                    ToolTip="Ordner öffnen">
+                    <Image Source="{StaticResource ResourceKey=IconOffice_Folder_open_64}" Stretch="Uniform" />
+                </Button>
+
             </DockPanel>
         </GroupBox>
 

@@ -35,4 +35,8 @@
     <Resource Include="Resources\Picture\ApplicationIcon.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Core\Controls\Themes\" />
+  </ItemGroup>
+
 </Project>

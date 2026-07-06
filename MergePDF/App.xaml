@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="Resources\Style\ApplicationResources.xaml" />
                 <ResourceDictionary Source="Resources\Localization\Localization.xaml" />
                 <ResourceDictionary Source="TemplateCore\Themes\Generic.xaml" />
+                <ResourceDictionary Source="Core\Controls\Themes\Generic.xaml" />
 
                 <!--  Externe Styles aus Bibliotheken  -->
             </ResourceDictionary.MergedDictionaries>

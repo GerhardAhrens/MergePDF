@@ -153,7 +153,7 @@ namespace MergePDF.View
             if (dlg.ShowDialog() == true)
             {
                 string selectedFolderPath = dlg.FolderName;
-                LoadFileToListbox(selectedFolderPath);
+                this.LoadFileToListbox(selectedFolderPath);
             }
         }
 
@@ -187,17 +187,6 @@ namespace MergePDF.View
             {
                 return;
             }
-
-            /*
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.Title = "PDF-Datei speichern";
-            dlg.Filter = "PDF-Dateien (*.pdf)|*.pdf";
-            dlg.DefaultExt = ".pdf";
-            if (dlg.ShowDialog() == true)
-            {
-                this.MergeFilename = dlg.FileName;
-            }
-            */
 
             if (commandParam != null && commandParam is CommandButtons button)
             {
@@ -233,7 +222,7 @@ namespace MergePDF.View
                             }
 
                             // Zusammengeführte Datei speichern
-                            string fullMergeName = Path.Combine(mergePath, Path.ChangeExtension(this.MergeFilename, ".pdf"));
+                            string fullMergeName = this.MergeFilename;
                             targetDoc.Save(fullMergeName);
                         }
 
