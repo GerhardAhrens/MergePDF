@@ -12,6 +12,7 @@ Das Projekt dient dazu, PDF Dateien zu splitten und zusammenzufügen.
 
 ## Splitten von PDF Dateien
 
+![Merge Dialog](SplitPDFView.png)
 
 ## Zusammenführen von PDF Dateien
 

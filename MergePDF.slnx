@@ -4,6 +4,7 @@
     <File Path="MainWindow.png" />
     <File Path="MergePDFView.png" />
     <File Path="README.md" />
+    <File Path="SplitPDFView.png" />
   </Folder>
   <Project Path="MergePDF/MergePDF.csproj" />
 </Solution>

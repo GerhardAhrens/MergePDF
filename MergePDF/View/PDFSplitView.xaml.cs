@@ -116,6 +116,12 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
+        public string SinglePages
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
 
         #endregion Properties
@@ -197,7 +203,7 @@ namespace MergePDF.View
                 return;
             }
 
-            if (Directory.Exists(Path.GetDirectoryName(this.SplittFilename)))
+            if (Directory.Exists(Path.GetDirectoryName(this.SplittFilename)) == false)
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(this.SplittFilename));
             }
@@ -212,7 +218,11 @@ namespace MergePDF.View
                     }
                     else
                     {
-                        this.SplitSelectedPage();
+                        string splitRange = this.ParseTextBoxInput();
+                        if (string.IsNullOrEmpty(splitRange) == false)
+                        {
+                            this.SplitSelectedPage(splitRange);
+                        }
                     }
                 }
             }
@@ -220,6 +230,16 @@ namespace MergePDF.View
 
         private void SplitAllPages()
         {
+            if (this.SelectedPdfFile == null)
+            {
+                return;
+            }
+
+            if (this.PDFFilesSource.Count(f => f.IsSelectedItem == true) > 1)
+            {
+                return;
+            }
+
             PDFFileItem SelectedPdfFile = this.PDFFilesSource.FirstOrDefault(f => f.IsSelectedItem == true);
             using (PdfDocument inputDocument = PdfReader.Open(SelectedPdfFile.Fullname, PdfDocumentOpenMode.Import))
             {
@@ -241,7 +261,7 @@ namespace MergePDF.View
             }
         }
 
-        private void SplitSelectedPage()
+        private void SplitSelectedPage(string splitRange)
         {
             PDFFileItem SelectedPdfFile = this.PDFFilesSource.FirstOrDefault(f => f.IsSelectedItem == true);
             using (PdfDocument inputDocument = PdfReader.Open(SelectedPdfFile.Fullname, PdfDocumentOpenMode.Import))
@@ -493,5 +513,47 @@ namespace MergePDF.View
         }
 
         #endregion Image from PDF
+
+        private string ParseTextBoxInput()
+        {
+            // 1. Text auslesen und Strichpunkte vereinheitlichen (Semikolon als Trenner)
+            string rawInput = this.SinglePages;
+
+            // 2. Zahlen und Bereiche extrahieren
+            var parsedNumbers = new HashSet<int>();
+            var parts = rawInput.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var part in parts)
+            {
+                // Wenn es ein Bereich (z.B. "1-3") ist
+                if (part.Contains("-"))
+                {
+                    var range = part.Split('-');
+                    if (range.Length == 2 &&
+                        int.TryParse(range[0], out int start) &&
+                        int.TryParse(range[1], out int end))
+                    {
+                        // Für den Fall, dass Start größer als Ende angegeben wurde
+                        if (start > end) { int temp = start; start = end; end = temp; }
+
+                        for (int i = start; i <= end; i++)
+                        {
+                            parsedNumbers.Add(i);
+                        }
+                    }
+                }
+                // Wenn es eine einzelne Zahl ist
+                else if (int.TryParse(part, out int singleNumber))
+                {
+                    parsedNumbers.Add(singleNumber);
+                }
+            }
+
+            // 3. Sortieren und zu einem String mit ';' zusammensetzen
+            string result = string.Join(";", parsedNumbers.OrderBy(n => n));
+
+            // 4. Ergebnis zurück in die TextBox schreiben (oder anderweitig verwenden)
+            return result;
+        }
     }
 }

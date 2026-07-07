@@ -232,54 +232,85 @@
             </Canvas>
             <!--#endregion Drag and Drop Line Overlay-->
 
-            <Grid
-                Grid.Row="0"
+            <Border
                 Grid.Column="1"
-                Background="LightBlue"
-                ColumnDefinitions="150"
-                RowDefinitions="Auto,Auto,Auto,Auto,*">
-                <TextBlock
-                    Grid.Row="0"
-                    Margin="5,0,0,0"
-                    FontSize="13"
-                    FontWeight="Medium"
-                    Text="Angaben, wie PDF gesplittet werden soll"
-                    TextWrapping="Wrap" />
+                Margin="0,5,0,5"
+                BorderBrush="Gray"
+                BorderThickness="1">
+                <Grid
+                    Grid.Column="1"
+                    Background="LightBlue"
+                    ColumnDefinitions="150"
+                    RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*">
+                    <TextBlock
+                        Grid.Row="0"
+                        Margin="5,0,0,0"
+                        FontSize="13"
+                        FontWeight="Medium"
+                        Text="Angaben, wie PDF gesplittet werden soll"
+                        TextWrapping="Wrap" />
 
-                <Border
-                    Grid.Row="1"
-                    Height="1"
-                    Margin="0,5,0,0"
-                    Background="Gray" />
+                    <Border
+                        Grid.Row="1"
+                        Height="1"
+                        Margin="0,5,0,0"
+                        Background="Gray" />
 
-                <StackPanel
-                    Grid.Row="2"
-                    Margin="5,5,0,0"
-                    Orientation="Horizontal">
-                    <TextBlock Text="Jede Seite" />
-                    <CheckBox Margin="5,0,0,0" IsChecked="{Binding Path=SplittAllPages, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
+                    <StackPanel
+                        Grid.Row="2"
+                        Margin="5,5,0,0"
+                        Orientation="Horizontal">
+                        <TextBlock FontWeight="Medium" Text="Jede Seite" />
+                        <CheckBox Margin="5,0,0,0" IsChecked="{Binding Path=SplittAllPages, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
 
-                <Border
-                    Grid.Row="3"
-                    Height="1"
-                    Margin="0,5,0,0"
-                    Background="Gray" />
+                    <Border
+                        Grid.Row="3"
+                        Height="1"
+                        Margin="0,5,0,0"
+                        Background="Gray" />
 
-            </Grid>
+                    <TextBlock
+                        Grid.Row="4"
+                        Margin="5,5,0,0"
+                        VerticalAlignment="Center"
+                        FontWeight="Medium"
+                        Text="Einzelne Seiten/Bereich" />
+
+                    <TextBox
+                        Grid.Row="5"
+                        Width="140"
+                        Height="25"
+                        Margin="5,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Text="{Binding Path=SinglePages, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <Border
+                        Grid.Row="6"
+                        Height="1"
+                        Margin="0,5,0,0"
+                        Background="Gray" />
+                </Grid>
+            </Border>
 
             <ScrollViewer
                 Grid.Row="0"
                 Grid.Column="2"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Auto">
-                <Image
-                    x:Name="PdfImage"
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    RenderOptions.BitmapScalingMode="HighQuality"
-                    RenderOptions.EdgeMode="Aliased"
-                    Stretch="None" />
+                <Border
+                    Margin="5,5,5,5"
+                    BorderBrush="Gray"
+                    BorderThickness="1">
+                    <Image
+                        x:Name="PdfImage"
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        RenderOptions.EdgeMode="Aliased"
+                        Stretch="None" />
+                </Border>
             </ScrollViewer>
 
         </Grid>
