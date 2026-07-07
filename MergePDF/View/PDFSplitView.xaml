@@ -261,7 +261,7 @@
                         Margin="5,5,0,0"
                         Orientation="Horizontal">
                         <TextBlock FontWeight="Medium" Text="Alle Seite" />
-                        <CheckBox Margin="5,0,0,0" IsChecked="{Binding Path=SplittAllPages, UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Margin="5,0,0,0" IsChecked="{Binding Path=SplitAllPages, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
                     <Border
@@ -307,7 +307,8 @@
                         Margin="5,0,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        Text="{Binding Path=FileSuffix, UpdateSourceTrigger=PropertyChanged}" />
+                        VerticalContentAlignment="Center"
+                        Text="{Binding Path=FileSuffix, UpdateSourceTrigger=PropertyChanged, FallbackValue=~FileSuffix}" />
 
                     <Border
                         Grid.Row="9"
@@ -345,8 +346,8 @@
                         Margin="5,0,0,0"
                         HorizontalAlignment="Center"
                         Background="Transparent"
-                        Command="{Binding Path=OpenFolderCommand}"
-                        CommandParameter="{x:Static core:CommandButtons.OpenFolder}"
+                        Command="{Binding Path=ResetCommand}"
+                        CommandParameter="{x:Static core:CommandButtons.ResetInput}"
                         ToolTip="Eingaben zurücksetzten">
                         <Image Source="{StaticResource ResourceKey=IconReset}" Stretch="Uniform" />
                     </Button>

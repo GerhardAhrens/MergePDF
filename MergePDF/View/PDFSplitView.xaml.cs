@@ -26,6 +26,7 @@ namespace MergePDF.View
 
     using System.Collections.ObjectModel;
     using System.IO;
+    using System.Runtime.Versioning;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -35,6 +36,7 @@ namespace MergePDF.View
     /// <summary>
     /// Interaktionslogik für PDFSplitView.xaml
     /// </summary>
+    [SupportedOSPlatform("Windows")]
     public partial class PDFSplitView : UserControlBase
     {
         private FpdfDocumentT _document;
@@ -51,12 +53,14 @@ namespace MergePDF.View
             WeakEventManager<UserControl, RoutedEventArgs>.AddHandler(this, "Loaded", this.OnLoaded);
 
             this.CurrentCtorArgs = args;
+            this.SplitPageVarinate = SplitVariante.None;
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
             this.OpenFolderCommand = new CommandBase(commandParam => this.OnOpenFolder(commandParam), () => true);
             this.PlusPageCommand = new CommandBase(commandParam => this.OnPlusMinusPage(commandParam), () => true);
             this.MinusPageCommand = new CommandBase(commandParam => this.OnPlusMinusPage(commandParam), () => true);
             this.SavePDFCommand = new CommandBase(commandParam => this.OnSavePDF(commandParam), () => true);
+            this.ResetCommand = new CommandBase(commandParam => this.OnReset(commandParam), () => true);
 
             this.DataContext = this;
         }
@@ -67,6 +71,7 @@ namespace MergePDF.View
         public CommandBase PlusPageCommand { get; private set; }
         public CommandBase MinusPageCommand { get; private set; }
         public CommandBase SavePDFCommand { get; private set; }
+        public CommandBase ResetCommand { get; private set; }
 
         public ObservableCollection<PDFFileItem> PDFFilesSource
         {
@@ -110,22 +115,22 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
-        public bool SplittAllPages
+        public bool SplitAllPages
         {
             get => base.GetValue<bool>();
-            set => base.SetValue(value);
+            set => base.SetValue(value, this.BoolHandler);
         }
 
         public string SinglePages
         {
             get => base.GetValue<string>();
-            set => base.SetValue(value);
+            set => base.SetValue(value, this.StringHandler);
         }
 
         public string ExtractRangePages
         {
             get => base.GetValue<string>();
-            set => base.SetValue(value);
+            set => base.SetValue(value, this.StringHandler);
         }
 
         public string FileSuffix
@@ -136,6 +141,7 @@ namespace MergePDF.View
 
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         private MessageBase Message { get; } = new MessageBase();
+        private SplitVariante SplitPageVarinate { get; set; }
 
         #endregion Properties
 
@@ -240,16 +246,24 @@ namespace MergePDF.View
             {
                 if (button == CommandButtons.SavePDF)
                 {
-                    if (this.SplittAllPages == true)
+                    if(this.SplitPageVarinate == SplitVariante.AllPages)
                     {
-                        this.SplitAllPages();
+                        this.SplitAllPagesHandler();
                     }
-                    else
+                    else if(this.SplitPageVarinate == SplitVariante.SinglePages)
                     {
                         string splitRange = this.ParseTextBoxInput();
                         if (string.IsNullOrEmpty(splitRange) == false)
                         {
                             this.SplitSelectedPage(splitRange);
+                        }
+                    }
+                    else if (this.SplitPageVarinate == SplitVariante.RangePages)
+                    {
+                        string splitRange = this.ParseTextBoxInput();
+                        if (string.IsNullOrEmpty(splitRange) == false)
+                        {
+                            this.ExtractPages(splitRange);
                         }
                     }
 
@@ -258,7 +272,21 @@ namespace MergePDF.View
             }
         }
 
-        private void SplitAllPages()
+        private void OnReset(object commandParam)
+        {
+            if (commandParam != null && commandParam is CommandButtons button)
+            {
+                if (button == CommandButtons.ResetInput)
+                {
+                    this.SplitPageVarinate = SplitVariante.None;
+                    this.SplitAllPages = false;
+                    this.SinglePages = string.Empty;
+                    this.ExtractRangePages = string.Empty;
+                }
+            }
+        }
+
+        private async void SplitAllPagesHandler()
         {
             if (this.SelectedPdfFile == null)
             {
@@ -288,10 +316,16 @@ namespace MergePDF.View
                         singlePageDocument.Save(outputPdf);
                     }
                 }
+
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    string saveOK = $"PDF Datei unter {this.SplittFilename} gespeichert";
+                    await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
+                }
             }
         }
 
-        private void SplitSelectedPage(string splitRange)
+        private async void SplitSelectedPage(string splitRange)
         {
             PDFFileItem SelectedPdfFile = this.PDFFilesSource.FirstOrDefault(f => f.IsSelectedItem == true);
             List<int> splitRangeSorce = splitRange.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
@@ -312,11 +346,21 @@ namespace MergePDF.View
                         singlePageDocument.Save(outputPdf);
                     }
                 }
+
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    string saveOK = $"PDF Datei unter {this.SplittFilename} gespeichert";
+                    await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
+                }
             }
         }
 
-        private void ExtractRangePages(int startSeite, int endSeite)
+        private async void ExtractPages(string splitRange)
         {
+            List<int> splitRangeSorce = splitRange.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
+
+            int startSeite = splitRangeSorce.First();
+            int endSeite = splitRangeSorce.Last();
             // 1. Quelldatei im ReadOnly-Modus öffnen
             using (PdfDocument inputDocument = PdfReader.Open(SelectedPdfFile.Fullname, PdfDocumentOpenMode.Import))
             {
@@ -338,6 +382,12 @@ namespace MergePDF.View
                         // 4. Neues Dokument speichern
                         zielDokument.Save(this.SplittFilename);
                     }
+                }
+
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    string saveOK = $"PDF Datei unter {this.SplittFilename} gespeichert";
+                    await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
                 }
             }
         }
@@ -587,7 +637,12 @@ namespace MergePDF.View
         private string ParseTextBoxInput()
         {
             // 1. Text auslesen und Strichpunkte vereinheitlichen (Semikolon als Trenner)
-            string rawInput = this.SinglePages;
+            string rawInput = string.IsNullOrEmpty(this.SinglePages) == false ? this.SinglePages : this.ExtractRangePages;
+
+            if (string.IsNullOrEmpty(rawInput))
+            {
+                rawInput = string.IsNullOrEmpty(this.ExtractRangePages) == false ? this.ExtractRangePages : this.SinglePages;
+            }
 
             // 2. Zahlen und Bereiche extrahieren
             var parsedNumbers = new HashSet<int>();
@@ -624,6 +679,34 @@ namespace MergePDF.View
 
             // 4. Ergebnis zurück in die TextBox schreiben (oder anderweitig verwenden)
             return result;
+        }
+
+        private void BoolHandler(bool arg1, string arg2)
+        {
+            if (arg2.Equals("SplitAllPages") == true)
+            {
+                this.SplitPageVarinate = arg1 == true ? SplitVariante.AllPages : SplitVariante.None;
+            }
+            else
+            {
+                this.SplitPageVarinate = SplitVariante.None;
+            }
+        }
+
+        private void StringHandler(string arg1, string arg2)
+        {
+            if (arg2.Equals("SinglePages") == true)
+            {
+                this.SplitPageVarinate = string.IsNullOrEmpty(arg1) == false ? SplitVariante.SinglePages : SplitVariante.None;
+            }
+            else if (arg2.Equals("ExtractRangePages") == true)
+            {
+                this.SplitPageVarinate = string.IsNullOrEmpty(arg1) == false ? SplitVariante.RangePages : SplitVariante.None;
+            }
+            else
+            {
+                this.SplitPageVarinate = SplitVariante.None;
+            }
         }
     }
 }

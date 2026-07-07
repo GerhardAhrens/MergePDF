@@ -12,6 +12,7 @@ Das Projekt dient dazu, PDF Dateien zu splitten und zusammenzufügen.
 
 ## Splitten von PDF Dateien
 
+Für das splitten von PDF Dateien stehen verschiedne Möglichkeiten zur Verfügung. Es können einzelne Seiten, ein Bereich von Seiten oder jede Seite in eine eigene Datei gespeichert werden.
 ![Merge Dialog](SplitPDFView.png)
 
 ## Zusammenführen von PDF Dateien

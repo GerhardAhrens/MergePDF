@@ -18,6 +18,8 @@
         PDFMerge = 5,
         [Description("Ordner öffnen")]
         OpenFolder = 6,
+        [Description("Eingabe in PDF Split löschen")]
+        ResetInput = 7,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]
