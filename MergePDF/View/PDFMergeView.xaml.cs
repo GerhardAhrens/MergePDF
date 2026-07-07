@@ -182,7 +182,7 @@ namespace MergePDF.View
             }
         }
 
-        private void OnSavePDF(object commandParam)
+        private async void OnSavePDF(object commandParam)
         {
             string mergePath = string.Empty;
             if (string.IsNullOrEmpty(this.MergeFilename) == true)
@@ -221,6 +221,13 @@ namespace MergePDF.View
                                         targetDoc.AddPage(pdfDoc.Pages[i]);
                                     }
                                 }
+
+                                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                                {
+                                    string mergeFileInfo = $"Datei {file.Filename} wurde zu {this.MergeFilename} hinzugefügt.";
+                                    await App.EventAgg.PublishAsync(new StatusEvent(mergeFileInfo));
+                                }
+
                             }
 
                             // Zusammengeführte Datei speichern
@@ -249,7 +256,8 @@ namespace MergePDF.View
             {
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                 {
-                    await App.EventAgg.PublishAsync(new StatusEvent($"{folderPath}", "{folderPath}"));
+                    await App.EventAgg.PublishAsync(new StatusEvent($"{folderPath}", $"{folderPath}"));
+                    await App.EventAgg.PublishAsync(new StatusEvent("Verzeichnis wird gelesen"));
                 }
 
                 int order = 1;
@@ -265,6 +273,12 @@ namespace MergePDF.View
                 }
 
                 this.PDFFilesSource = new ObservableCollection<PDFFileItem>(files.OrderBy(f => f.Order));
+
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
+                }
+
             }
         }
 

@@ -15,14 +15,6 @@
 
 namespace MergePDF.View
 {
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using System.Windows.Media.Imaging;
-
     using MergePDF.Core;
 
     using Microsoft.Win32;
@@ -31,6 +23,14 @@ namespace MergePDF.View
 
     using PdfSharpCore.Pdf;
     using PdfSharpCore.Pdf.IO;
+
+    using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Input;
+    using System.Windows.Media;
+    using System.Windows.Media.Imaging;
 
     /// <summary>
     /// Interaktionslogik für PDFSplitView.xaml
@@ -54,6 +54,9 @@ namespace MergePDF.View
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
             this.OpenFolderCommand = new CommandBase(commandParam => this.OnOpenFolder(commandParam), () => true);
+            this.PlusPageCommand = new CommandBase(commandParam => this.OnPlusMinusPage(commandParam), () => true);
+            this.MinusPageCommand = new CommandBase(commandParam => this.OnPlusMinusPage(commandParam), () => true);
+            this.SavePDFCommand = new CommandBase(commandParam => this.OnSavePDF(commandParam), () => true);
 
             this.DataContext = this;
         }
@@ -61,6 +64,9 @@ namespace MergePDF.View
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase OpenFolderCommand { get; private set; }
+        public CommandBase PlusPageCommand { get; private set; }
+        public CommandBase MinusPageCommand { get; private set; }
+        public CommandBase SavePDFCommand { get; private set; }
 
         public ObservableCollection<PDFFileItem> PDFFilesSource
         {
@@ -92,7 +98,7 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
-        public string MergeFilename
+        public string SplittFilename
         {
             get => base.GetValue<string>();
             set => base.SetValue(value);
@@ -101,6 +107,12 @@ namespace MergePDF.View
         public string PDFPageInfo
         {
             get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
+        public bool SplittAllPages
+        {
+            get => base.GetValue<bool>();
             set => base.SetValue(value);
         }
 
@@ -148,7 +160,7 @@ namespace MergePDF.View
             if (dlg.ShowDialog() == true)
             {
                 string selectedFolderPath = dlg.FolderName;
-                LoadFileToListbox(selectedFolderPath);
+                this.LoadFileToListbox(selectedFolderPath);
             }
         }
 
@@ -180,14 +192,62 @@ namespace MergePDF.View
         private void OnSavePDF(object commandParam)
         {
             string mergePath = string.Empty;
-            if (string.IsNullOrEmpty(this.MergeFilename) == true)
+            if (string.IsNullOrEmpty(this.SplittFilename) == true)
             {
                 return;
+            }
+
+            if (Directory.Exists(Path.GetDirectoryName(this.SplittFilename)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(this.SplittFilename));
             }
 
             if (commandParam != null && commandParam is CommandButtons button)
             {
                 if (button == CommandButtons.SavePDF)
+                {
+                    if (this.SplittAllPages == true)
+                    {
+                        this.SplitAllPages();
+                    }
+                    else
+                    {
+                        this.SplitSelectedPage();
+                    }
+                }
+            }
+        }
+
+        private void SplitAllPages()
+        {
+            PDFFileItem SelectedPdfFile = this.PDFFilesSource.FirstOrDefault(f => f.IsSelectedItem == true);
+            using (PdfDocument inputDocument = PdfReader.Open(SelectedPdfFile.Fullname, PdfDocumentOpenMode.Import))
+            {
+                for (int i = 0; i < inputDocument.PageCount; i++)
+                {
+                    // Neues Dokument für die einzelne Seite erstellen
+                    using (PdfDocument singlePageDocument = new PdfDocument())
+                    {
+                        // Seite aus dem Originaldokument importieren und hinzufügen
+                        singlePageDocument.AddPage(inputDocument.Pages[i]);
+
+                        // Dateiname für die Einzelseite generieren (z. B. seite_1.pdf)
+                        string outputPdf = Path.Combine(Path.GetDirectoryName(this.SplittFilename), $"{Path.GetFileNameWithoutExtension(this.SplittFilename)}_Seite_{i + 1}.pdf");
+
+                        // Neues Dokument speichern
+                        singlePageDocument.Save(outputPdf);
+                    }
+                }
+            }
+        }
+
+        private void SplitSelectedPage()
+        {
+            PDFFileItem SelectedPdfFile = this.PDFFilesSource.FirstOrDefault(f => f.IsSelectedItem == true);
+            using (PdfDocument inputDocument = PdfReader.Open(SelectedPdfFile.Fullname, PdfDocumentOpenMode.Import))
+            {
+                // Neues Dokument für die ausgewählte Seite erstellen
+                using (PdfDocument singlePageDocument = new PdfDocument())
                 {
                 }
             }
@@ -204,7 +264,8 @@ namespace MergePDF.View
             {
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                 {
-                    await App.EventAgg.PublishAsync(new StatusEvent($"{folderPath}", "{folderPath}"));
+                    await App.EventAgg.PublishAsync(new StatusEvent($"{folderPath}", $"{folderPath}"));
+                    await App.EventAgg.PublishAsync(new StatusEvent("Verzeichnis wird gelesen"));
                 }
 
                 int order = 1;
@@ -220,6 +281,11 @@ namespace MergePDF.View
                 }
 
                 this.PDFFilesSource = new ObservableCollection<PDFFileItem>(files.OrderBy(f => f.Order));
+
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
+                }
             }
         }
 
