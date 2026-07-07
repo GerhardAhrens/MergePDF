@@ -177,6 +177,8 @@ namespace MergePDF.View
                         this.RenderPage();
                     }
                 }
+
+                this.PDFPageInfo = $"{this._currentPage+1}/{fpdfview.FPDF_GetPageCount(this._document)}";
             }
         }
 
@@ -427,8 +429,8 @@ namespace MergePDF.View
                 throw new Exception("PDF konnte nicht geladen werden.");
             }
 
-            this.PDFPageInfo = $"{fpdfview.FPDF_GetPageCount(this._document)}";
             this._currentPage = 0;
+            this.PDFPageInfo = $"{this._currentPage+1}/{fpdfview.FPDF_GetPageCount(this._document)}";
             this.RenderPage();
         }
 

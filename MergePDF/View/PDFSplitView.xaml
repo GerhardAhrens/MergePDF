@@ -22,6 +22,39 @@
         ColumnDefinitions="*"
         RowDefinitions="Auto,*">
 
+        <!--#region Drag and Drop Popup-->
+        <Popup
+            x:Name="DragDropPopup"
+            AllowsTransparency="True"
+            IsHitTestVisible="False"
+            Placement="Relative">
+
+            <Border
+                Padding="5"
+                Background="LightYellow"
+                BorderBrush="Gray"
+                BorderThickness="1">
+                <StackPanel Orientation="Horizontal">
+                    <Image
+                        Width="32"
+                        Height="32"
+                        Margin="0,0,5,0"
+                        Source="{StaticResource ResourceKey=IconOffice_Page_PDF_64}" />
+
+                    <TextBlock
+                        x:Name="PopupText"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        FontWeight="Medium">
+                        <Run Text="{Binding Path=DragDropTooltipText}" />
+                        <LineBreak />
+                        <Run Text="{Binding Path=FileSizeTooltip}" />
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </Popup>
+        <!--#endregion-->
+
         <!--#region Hauptmenübar-->
         <GroupBox
             x:Name="MainMenubar"
@@ -72,7 +105,82 @@
 
             </DockPanel>
         </GroupBox>
-
         <!--#endregion Hauptmenübar-->
+
+        <Grid
+            Grid.Row="1"
+            Grid.Column="0"
+            ColumnDefinitions="Auto,*"
+            RowDefinitions="*">
+            <ListBox
+                x:Name="ListBoxFiles"
+                Grid.Row="0"
+                Grid.Column="0"
+                Width="300"
+                Margin="5"
+                AllowDrop="True"
+                DragLeave="ListBoxFiles_DragLeave"
+                DragOver="ListBoxFiles_DragOver"
+                Drop="ListBoxFiles_Drop"
+                ItemsSource="{Binding Path=PDFFilesSource}"
+                MouseMove="ListBoxFiles_MouseMove"
+                PreviewMouseLeftButtonDown="ListBoxFiles_PreviewMouseLeftButtonDown"
+                SelectedItem="{Binding Path=SelectedPdfFile, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="5" Orientation="Horizontal">
+                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=IsSelectedItem, Mode=TwoWay}" />
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                Text="{Binding Path=Filename}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!--#region Drag and Drop Line Overlay-->
+            <Canvas x:Name="DrogDropLineOverlay" IsHitTestVisible="False">
+                <!--  Einfügelinie  -->
+                <Line
+                    x:Name="InsertLine"
+                    Stroke="DodgerBlue"
+                    StrokeThickness="2"
+                    Visibility="Collapsed" />
+
+                <!--  Linker Pfeil  -->
+                <Polygon
+                    x:Name="LeftArrow"
+                    Fill="DodgerBlue"
+                    Stroke="DodgerBlue"
+                    StrokeThickness="1"
+                    Visibility="Collapsed" />
+
+                <!--  Rechter Pfeil  -->
+                <Polygon
+                    x:Name="RightArrow"
+                    Fill="DodgerBlue"
+                    Stroke="DodgerBlue"
+                    StrokeThickness="1"
+                    Visibility="Collapsed" />
+            </Canvas>
+            <!--#endregion Drag and Drop Line Overlay-->
+
+            <ScrollViewer
+                Grid.Row="0"
+                Grid.Column="1"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto">
+                <Image
+                    x:Name="PdfImage"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    RenderOptions.EdgeMode="Aliased"
+                    Stretch="None" />
+            </ScrollViewer>
+
+        </Grid>
+
     </Grid>
 </base:UserControlBase>
