@@ -122,7 +122,20 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
+        public string ExtractRangePages
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
+        public string FileSuffix
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
+        private MessageBase Message { get; } = new MessageBase();
 
         #endregion Properties
 
@@ -130,6 +143,8 @@ namespace MergePDF.View
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            this.FileSuffix = App.Settings.FileSuffix;
+
             if (App.EventAgg.IsSubscription<StatusEvent>() == true)
             {
                 await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
@@ -200,6 +215,19 @@ namespace MergePDF.View
             string mergePath = string.Empty;
             if (string.IsNullOrEmpty(this.SplittFilename) == true)
             {
+                this.Message.Hinweis("PDF Speichern","Bitte geben Sie einen Dateinamen ein.");
+                return;
+            }
+
+            if (this.PDFFilesSource.Count(f => f.IsSelectedItem == true) == 0)
+            {
+                this.Message.Hinweis("PDF Speichern", "Bitte wählen Sie mindestens eine PDF-Datei aus.");
+                return;
+            }
+
+            if (this.PDFFilesSource.Count(f => f.IsSelectedItem == true) > 1)
+            {
+                this.Message.Hinweis("PDF Speichern", "Bitte wählen Sie nur eine PDF-Datei aus.");
                 return;
             }
 
@@ -224,6 +252,8 @@ namespace MergePDF.View
                             this.SplitSelectedPage(splitRange);
                         }
                     }
+
+                    App.Settings.FileSuffix = this.FileSuffix;
                 }
             }
         }
@@ -235,9 +265,9 @@ namespace MergePDF.View
                 return;
             }
 
-            if (this.PDFFilesSource.Count(f => f.IsSelectedItem == true) > 1)
+            if (string.IsNullOrEmpty(this.SplittFilename) == true)
             {
-                return;
+                this.SplittFilename = "Seite";
             }
 
             PDFFileItem SelectedPdfFile = this.PDFFilesSource.FirstOrDefault(f => f.IsSelectedItem == true);
@@ -252,7 +282,7 @@ namespace MergePDF.View
                         singlePageDocument.AddPage(inputDocument.Pages[i]);
 
                         // Dateiname für die Einzelseite generieren (z. B. seite_1.pdf)
-                        string outputPdf = Path.Combine(Path.GetDirectoryName(this.SplittFilename), $"{Path.GetFileNameWithoutExtension(this.SplittFilename)}_Seite_{i + 1}.pdf");
+                        string outputPdf = Path.Combine(Path.GetDirectoryName(this.SplittFilename), $"{Path.GetFileNameWithoutExtension(this.SplittFilename)}_{this.FileSuffix}_{i + 1}.pdf");
 
                         // Neues Dokument speichern
                         singlePageDocument.Save(outputPdf);
@@ -264,14 +294,54 @@ namespace MergePDF.View
         private void SplitSelectedPage(string splitRange)
         {
             PDFFileItem SelectedPdfFile = this.PDFFilesSource.FirstOrDefault(f => f.IsSelectedItem == true);
+            List<int> splitRangeSorce = splitRange.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
             using (PdfDocument inputDocument = PdfReader.Open(SelectedPdfFile.Fullname, PdfDocumentOpenMode.Import))
             {
                 // Neues Dokument für die ausgewählte Seite erstellen
                 using (PdfDocument singlePageDocument = new PdfDocument())
                 {
+                    foreach (int page in splitRangeSorce)
+                    {
+                        // Seite aus dem Originaldokument importieren und hinzufügen
+                        singlePageDocument.AddPage(inputDocument.Pages[page]);
+
+                        // Dateiname für die Einzelseite generieren (z. B. seite_1.pdf)
+                        string outputPdf = Path.Combine(Path.GetDirectoryName(this.SplittFilename), $"{Path.GetFileNameWithoutExtension(this.SplittFilename)}_{this.FileSuffix}_{page}.pdf");
+
+                        // Neues Dokument speichern
+                        singlePageDocument.Save(outputPdf);
+                    }
                 }
             }
         }
+
+        private void ExtractRangePages(int startSeite, int endSeite)
+        {
+            // 1. Quelldatei im ReadOnly-Modus öffnen
+            using (PdfDocument inputDocument = PdfReader.Open(SelectedPdfFile.Fullname, PdfDocumentOpenMode.Import))
+            {
+                // 2. Neues leeres PDF-Dokument erstellen
+                using (PdfDocument zielDokument = new PdfDocument())
+                {
+                    // Beispiel: Seiten 4 bis 6 extrahieren
+                    // Hinweis: Da es nullbasiert ist, sind die Indizes 3, 4 und 5
+
+                    // Sicherstellen, dass die Seiten im Original existieren
+                    if (endSeite < inputDocument.Pages.Count)
+                    {
+                        // 3. Seiten durchlaufen und zum Zieldokument hinzufügen
+                        for (int i = startSeite; i <= endSeite; i++)
+                        {
+                            zielDokument.AddPage(inputDocument.Pages[i]);
+                        }
+
+                        // 4. Neues Dokument speichern
+                        zielDokument.Save(this.SplittFilename);
+                    }
+                }
+            }
+        }
+
         #endregion Command Events
 
         #region Laden der PDF Dateien zum Rendern
@@ -521,7 +591,7 @@ namespace MergePDF.View
 
             // 2. Zahlen und Bereiche extrahieren
             var parsedNumbers = new HashSet<int>();
-            var parts = rawInput.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = rawInput.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var part in parts)
             {

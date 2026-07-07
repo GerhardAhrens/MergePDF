@@ -112,6 +112,7 @@ namespace MergePDF.View
 
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
 
+        private MessageBase Message { get; } = new MessageBase();
         #endregion Properties
 
         #region Windows Events
@@ -187,6 +188,13 @@ namespace MergePDF.View
             string mergePath = string.Empty;
             if (string.IsNullOrEmpty(this.MergeFilename) == true)
             {
+                this.Message.Hinweis("PDF Speichern", "Bitte geben Sie einen Dateinamen ein.");
+                return;
+            }
+
+            if (this.PDFFilesSource.Count(f => f.IsSelectedItem == true) == 0)
+            {
+                this.Message.Hinweis("PDF Speichern", "Bitte wählen Sie mindestens eine PDF-Datei aus.");
                 return;
             }
 

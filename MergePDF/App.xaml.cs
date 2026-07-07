@@ -138,7 +138,6 @@ namespace MergePDF
             {
                 if (settings.IsExitSettings() == true)
                 {
-                    settings.Load();
                     settings.SetSetting(Settings);
                     settings.Save();
                 }
@@ -192,6 +191,7 @@ namespace MergePDF
                     settings.Username = $"{Environment.UserDomainName}\\{Environment.UserName}";
                     settings.LetzterZugriff = DateTime.Now;
                     settings.FrageExit = true;
+                    settings.FileSuffix = "Seite";
                     settings.Save();
                 }
                 else
