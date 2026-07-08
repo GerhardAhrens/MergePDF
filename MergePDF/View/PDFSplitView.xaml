@@ -99,7 +99,7 @@
                     Background="Transparent"
                     Command="{Binding Path=OpenFolderCommand}"
                     CommandParameter="{x:Static core:CommandButtons.OpenFolder}"
-                    ToolTip="Ordner öffnen">
+                    ToolTip="Ordner mit PDF Dateien öffnen">
                     <Image Source="{StaticResource ResourceKey=IconOffice_Folder_open_64}" Stretch="Uniform" />
                 </Button>
 
@@ -127,7 +127,7 @@
                     Background="Transparent"
                     Command="{Binding Path=PlusPageCommand}"
                     CommandParameter="{x:Static core:CommandButtons.PlusPage}"
-                    ToolTip="Ordner öffnen">
+                    ToolTip="Nächste Seite">
                     <Image Source="{StaticResource ResourceKey=IconSoftware_Plus2}" Stretch="Uniform" />
                 </Button>
 
@@ -139,7 +139,7 @@
                     Background="Transparent"
                     Command="{Binding Path=MinusPageCommand}"
                     CommandParameter="{x:Static core:CommandButtons.MinusPage}"
-                    ToolTip="Ordner öffnen">
+                    ToolTip="Vorherige Seite">
                     <Image Source="{StaticResource ResourceKey=IconSoftware_Minus2}" Stretch="Uniform" />
                 </Button>
 

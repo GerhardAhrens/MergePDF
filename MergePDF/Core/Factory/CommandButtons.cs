@@ -12,13 +12,13 @@
         Home = 2,
         [Description("Hilfe")]
         Help = 3,
-        [Description("PDF Split")]
+        [Description("PDF Datei splitten oder extrahieren")]
         PDFSplit = 4,
-        [Description("PDF Merge")]
+        [Description("PDF Dateien zusammenführen")]
         PDFMerge = 5,
-        [Description("Ordner öffnen")]
+        [Description("Ordner mit PDF Dateien öffnen")]
         OpenFolder = 6,
-        [Description("Eingabe in PDF Split löschen")]
+        [Description("Optionen zum PDF splitten und extrahieren löschen")]
         ResetInput = 7,
         [Description("Informationen")]
         InformationPopup = 20,
