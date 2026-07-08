@@ -443,9 +443,6 @@ namespace MergePDF.View
         private void LoadPdf(string fileName)
         {
             this._document = fpdfview.FPDF_LoadDocument(fileName, null);
-            string titel = Path.GetFileName(fileName);
-
-            _ = fpdf_doc.FPDF_GetMetaText(this._document, titel, 0, 0);
             if (this._document == null)
             {
                 throw new Exception("PDF konnte nicht geladen werden.");
