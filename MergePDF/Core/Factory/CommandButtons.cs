@@ -20,6 +20,8 @@
         OpenFolder = 6,
         [Description("Optionen zum PDF splitten und extrahieren löschen")]
         ResetInput = 7,
+        [Description("PDF Drucken")]
+        PDFPrint = 8,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]

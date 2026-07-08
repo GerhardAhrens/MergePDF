@@ -36,6 +36,7 @@ namespace MergePDF.View
             this.QuitCommand = new CommandBase(commandParam => this.OnQuit(commandParam), () => true);
             this.MergePDFCommand = new CommandBase(commandParam => this.ChangeView(commandParam), () => true);
             this.SplitPDFCommand = new CommandBase(commandParam => this.ChangeView(commandParam), () => true);
+            this.PrintPDFCommand = new CommandBase(commandParam => this.ChangeView(commandParam), () => true);
 
             this.InformationCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
             this.SettingsCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
@@ -49,6 +50,7 @@ namespace MergePDF.View
         public CommandBase QuitCommand { get; private set; }
         public CommandBase MergePDFCommand { get; private set; }
         public CommandBase SplitPDFCommand { get; private set; }
+        public CommandBase PrintPDFCommand { get; private set; }
 
         public CommandBase InformationCommand { get; private set; }
         public CommandBase SettingsCommand { get; private set; }
@@ -150,6 +152,10 @@ namespace MergePDF.View
                     {
                         await App.EventAgg.PublishAsync(args);
                     }
+                }
+                else if (button == CommandButtons.PDFPrint)
+                {
+
                 }
             }
 

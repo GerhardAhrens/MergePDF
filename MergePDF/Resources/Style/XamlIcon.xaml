@@ -489,6 +489,96 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
+    <DrawingImage x:Key="PdfPrintIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+
+                <!--  =========================  -->
+                <!--  PDF-Dokument  -->
+                <!--  =========================  -->
+
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#606060" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M7,2
+                            L15,2
+                            L17,4
+                            L17,11
+                            L7,11 Z
+                            M15,2
+                            L15,4
+                            L17,4
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  PDF-Balken  -->
+                <GeometryDrawing Brush="#D32F2F">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="7,2,10,3" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  =========================  -->
+                <!--  Drucker  -->
+                <!--  =========================  -->
+
+                <!--  Gehäuse  -->
+                <GeometryDrawing Brush="#ECECEC">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#606060" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="4,10,16,8" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Papierausgabe  -->
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#606060" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="6,16,12,6" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Oberer Einzug  -->
+                <GeometryDrawing Brush="#F7F7F7">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#606060" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="6,8,12,3" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Papierlinien  -->
+                <GeometryDrawing Brush="#B0B0B0">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="8,18,8,0.8" />
+                            <RectangleGeometry Rect="8,20,6,0.8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Status-LED  -->
+                <GeometryDrawing Brush="#3CB371">
+                    <GeometryDrawing.Geometry>
+                        <EllipseGeometry
+                            Center="17.2,13"
+                            RadiusX="0.7"
+                            RadiusY="0.7" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
     <!--#endregion Farbige Icon Symbole auf Basis von DrawingImage-->
 
     <!--#region Statuszeile-->
