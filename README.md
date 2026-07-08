@@ -12,13 +12,17 @@ Das Projekt dient dazu, PDF Dateien zu splitten und zusammenzufügen.
 
 ## Splitten von PDF Dateien
 
-Für das splitten von PDF Dateien stehen verschiedne Möglichkeiten zur Verfügung. Es können einzelne Seiten, ein Bereich von Seiten oder jede Seite in eine eigene Datei gespeichert werden.
+Für das splitten von PDF Dateien stehen verschiedene Möglichkeiten zur Verfügung. Es können einzelne Seiten, ein Bereich von Seiten oder jede Seite in eine eigene Datei gespeichert werden.<br>
+Eine weite Funktion ist, das aus einem bestehenden PDF Dokument, ein Bereich von Seiten extrahiert und in einem neuen PDF Dokument gespeichert werden kann.
 ![Merge Dialog](SplitPDFView.png)
 
 ## Zusammenführen von PDF Dateien
+Es können einzelne PDF Dateien in eine neue PDF Datei zusammengeführt werden. Dabei können die einzelnen PDF Dateien in der Reihenfolge sortiert werden, wie sie im neuen PDF Dokument erscheinen sollen.
 
 ![Merge Dialog](MergePDFView.png)
 
+# Hinweis
+Ein bearbeiten der PDF Datei ist mit diesem Tool nicht möglich. Es können nur PDF Dateien zusammengeführt, gesplittet oder extrahiert werden werden.
 # zusätzliche NuGet-Pakete
 In der Anwendung/Demo werden folgende zusätzliche Pakete verwendet
 
