@@ -155,7 +155,14 @@ namespace MergePDF.View
                 }
                 else if (button == CommandButtons.PDFPrint)
                 {
+                    ChangeViewEventArgs args = new();
+                    args.MenuButton = CommandButtons.PDFPrint;
+                    args.FromPage = CommandButtons.Home;
 
+                    if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                    {
+                        await App.EventAgg.PublishAsync(args);
+                    }
                 }
             }
 
