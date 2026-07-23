@@ -22,6 +22,8 @@
         ResetInput = 7,
         [Description("PDF Drucken")]
         PDFPrint = 8,
+        [Description("PDF Scannen")]
+        PDFScan = 9,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]

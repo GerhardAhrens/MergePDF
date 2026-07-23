@@ -153,6 +153,19 @@
                     HorizontalAlignment="Left"
                     Background="Transparent"
                     Command="{Binding Path=PrintPDFCommand}"
+                    CommandParameter="{x:Static core:CommandButtons.PDFScan}"
+                    ToolTip="PDF Scannen">
+                    <Image Source="{StaticResource ResourceKey=PdfScanIcon}" Stretch="Uniform" />
+                </Button>
+
+                <Button
+                    Grid.Column="0"
+                    Width="{StaticResource ResourceKey=ButtonSize}"
+                    Height="{StaticResource ResourceKey=ButtonSize}"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Command="{Binding Path=PrintPDFCommand}"
                     CommandParameter="{x:Static core:CommandButtons.PDFPrint}"
                     ToolTip="PDF Drucken">
                     <Image Source="{StaticResource ResourceKey=PdfPrintIcon}" Stretch="Uniform" />
