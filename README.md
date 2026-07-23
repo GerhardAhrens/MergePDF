@@ -6,7 +6,8 @@
 ![Version](https://img.shields.io/badge/Version-1.0.2026.0-yellow.svg)
 
 # Projekt
-Das Projekt dient dazu, PDF Dateien zu splitten und zusammenzufügen.
+Das Projekt dient dazu, PDF Dateien zu splitten, zusammenzufügen, Drucken und Scannen.
+Der Fokus liegt aber auf der Möglichkeit, PDF Dokumente zu splitten und zusammenzufügen.
 
 ![Hauptdialog](MainWindow.png)
 
@@ -20,6 +21,12 @@ Eine weite Funktion ist, das aus einem bestehenden PDF Dokument, ein Bereich von
 Es können einzelne PDF Dateien in eine neue PDF Datei zusammengeführt werden. Dabei können die einzelnen PDF Dateien in der Reihenfolge sortiert werden, wie sie im neuen PDF Dokument erscheinen sollen.
 
 ![Merge Dialog](MergePDFView.png)
+
+## Drucken von PDF Dokumenten
+
+![Print Dialog](PrintPDF.png)
+
+## Scannen von PDF Dokumenten
 
 # Hinweis
 Ein bearbeiten der PDF Datei ist mit diesem Tool nicht möglich. Es können nur PDF Dateien zusammengeführt, gesplittet oder extrahiert werden werden.
