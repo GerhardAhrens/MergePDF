@@ -343,7 +343,7 @@
                         Grid.Row="13"
                         Width="{StaticResource ResourceKey=ButtonSize}"
                         Height="{StaticResource ResourceKey=ButtonSize}"
-                        Margin="5,0,0,0"
+                        Margin="5,5,0,0"
                         HorizontalAlignment="Center"
                         Background="Transparent"
                         Command="{Binding Path=ResetCommand}"

@@ -91,6 +91,26 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
+        public bool PrintAllPages
+        {
+            get => base.GetValue<bool>();
+            set => base.SetValue(value, this.BoolHandler);
+        }
+
+        public string SinglePages
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value, this.StringHandler);
+        }
+
+        public string ExtractRangePages
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value, this.StringHandler);
+        }
+
+        private PrintVariante PrintPageVarinate { get; set; }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
 
         private MessageBase Message { get; } = new MessageBase();
@@ -146,6 +166,51 @@ namespace MergePDF.View
                 this.Message.Hinweis("PDF Drucken", "Bitte wählen nur eine PDF-Datei zum drucken aus.");
                 return;
             }
+
+            if (this.PDFFilesSource.Count(f => f.IsSelectedItem == true) == 0)
+            {
+                this.Message.Hinweis("PDF Drucken", "Bitte wählen Sie mindestens eine PDF-Datei aus.");
+                return;
+            }
+
+            if (this.PDFFilesSource.Count(f => f.IsSelectedItem == true) > 1)
+            {
+                this.Message.Hinweis("PDF Drucken", "Bitte wählen Sie nur eine PDF-Datei aus.");
+                return;
+            }
+
+            if (commandParam != null && commandParam is CommandButtons button)
+            {
+                if (button == CommandButtons.PDFPrint)
+                {
+                    if (this.PrintPageVarinate == PrintVariante.AllPages)
+                    {
+                    }
+                    else if (this.PrintPageVarinate == PrintVariante.SinglePages)
+                    {
+                    }
+                    else if (this.PrintPageVarinate == PrintVariante.RangePages)
+                    {
+                    }
+                }
+            }
+
+            var pages = new List<BitmapSource>();
+
+            // PDF öffnen
+            // Alle Seiten rendern
+            // BitmapSource-Liste füllen
+
+            int pageCount = fpdfview.FPDF_GetPageCount(this._document);
+
+            for (int i = 0; i < pageCount; i++)
+            {
+                pages.Add(RenderPdfPage(i));
+            }
+
+            var printer = new PdfPrintService();
+
+            printer.Print(pages, this.SelectedPdfFile.Filename);
 
         }
 
@@ -387,6 +452,77 @@ namespace MergePDF.View
             }
         }
 
+        private BitmapSource RenderPdfPage(int pageIndex, double zoom = 1.0)
+        {
+            var page = fpdfview.FPDF_LoadPage(this._document, pageIndex);
+
+            try
+            {
+                double pageWidth = fpdfview.FPDF_GetPageWidth(page);
+
+                double pageHeight = fpdfview.FPDF_GetPageHeight(page);
+
+                int width = (int)(pageWidth * zoom);
+                int height = (int)(pageHeight * zoom);
+
+                int stride = width * 4;
+
+                byte[] buffer = new byte[stride * height];
+
+                unsafe
+                {
+                    fixed (byte* pBuffer = buffer)
+                    {
+                        var bitmap = fpdfview.FPDFBitmapCreateEx(width, height, 4, (nint)pBuffer, stride);
+
+                        try
+                        {
+                            fpdfview.FPDFBitmapFillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
+
+                            fpdfview.FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
+                        }
+                        finally
+                        {
+                            fpdfview.FPDFBitmapDestroy(bitmap);
+                        }
+                    }
+                }
+
+                return BitmapSource.Create(width, height, 96 * zoom, 96 * zoom, System.Windows.Media.PixelFormats.Bgra32, null, buffer, stride);
+            }
+            finally
+            {
+                PDFiumCore.fpdfview.FPDF_ClosePage(page);
+            }
+        }
         #endregion Image from PDF
+
+        private void BoolHandler(bool arg1, string arg2)
+        {
+            if (arg2.Equals("PrintAllPages") == true)
+            {
+                this.PrintPageVarinate = arg1 == true ? PrintVariante.AllPages : PrintVariante.None;
+            }
+            else
+            {
+                this.PrintPageVarinate = PrintVariante.None;
+            }
+        }
+
+        private void StringHandler(string arg1, string arg2)
+        {
+            if (arg2.Equals("SinglePages") == true)
+            {
+                this.PrintPageVarinate = string.IsNullOrEmpty(arg1) == false ? PrintVariante.SinglePages : PrintVariante.None;
+            }
+            else if (arg2.Equals("ExtractRangePages") == true)
+            {
+                this.PrintPageVarinate = string.IsNullOrEmpty(arg1) == false ? PrintVariante.RangePages : PrintVariante.None;
+            }
+            else
+            {
+                this.PrintPageVarinate = PrintVariante.None;
+            }
+        }
     }
 }
