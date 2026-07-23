@@ -36,6 +36,7 @@ namespace MergePDF.View
             this.QuitCommand = new CommandBase(commandParam => this.OnQuit(commandParam), () => true);
             this.MergePDFCommand = new CommandBase(commandParam => this.ChangeView(commandParam), () => true);
             this.SplitPDFCommand = new CommandBase(commandParam => this.ChangeView(commandParam), () => true);
+            this.SacnPDFCommand = new CommandBase(commandParam => this.ChangeView(commandParam), () => true);
             this.PrintPDFCommand = new CommandBase(commandParam => this.ChangeView(commandParam), () => true);
 
             this.InformationCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
@@ -50,6 +51,7 @@ namespace MergePDF.View
         public CommandBase QuitCommand { get; private set; }
         public CommandBase MergePDFCommand { get; private set; }
         public CommandBase SplitPDFCommand { get; private set; }
+        public CommandBase SacnPDFCommand { get; private set; }
         public CommandBase PrintPDFCommand { get; private set; }
 
         public CommandBase InformationCommand { get; private set; }
@@ -146,6 +148,17 @@ namespace MergePDF.View
                 {
                     ChangeViewEventArgs args = new();
                     args.MenuButton = CommandButtons.PDFMerge;
+                    args.FromPage = CommandButtons.Home;
+
+                    if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                    {
+                        await App.EventAgg.PublishAsync(args);
+                    }
+                }
+                else if (button == CommandButtons.PDFScan)
+                {
+                    ChangeViewEventArgs args = new();
+                    args.MenuButton = CommandButtons.PDFScan;
                     args.FromPage = CommandButtons.Home;
 
                     if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)

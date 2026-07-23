@@ -152,7 +152,7 @@
                     Margin="5,0,0,0"
                     HorizontalAlignment="Left"
                     Background="Transparent"
-                    Command="{Binding Path=PrintPDFCommand}"
+                    Command="{Binding Path=SacnPDFCommand}"
                     CommandParameter="{x:Static core:CommandButtons.PDFScan}"
                     ToolTip="PDF Scannen">
                     <Image Source="{StaticResource ResourceKey=PdfScanIcon}" Stretch="Uniform" />

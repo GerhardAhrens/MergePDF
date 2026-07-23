@@ -15,12 +15,6 @@
 
 namespace MergePDF.View
 {
-    using MergePDF.Core;
-
-    using Microsoft.Win32;
-
-    using PDFiumCore;
-
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Windows;
@@ -28,6 +22,17 @@ namespace MergePDF.View
     using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
+
+    using MergePDF.Core;
+
+    using Microsoft.Win32;
+
+    using PDFiumCore;
+
+    using PdfSharpCore.Pdf;
+    using PdfSharpCore.Pdf.IO;
+
+    using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
     /// <summary>
     /// Interaktionslogik für PDFPrintView.xaml
@@ -52,6 +57,9 @@ namespace MergePDF.View
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
             this.OpenFolderCommand = new CommandBase(commandParam => this.OnOpenFolder(commandParam), () => true);
             this.PrintPDFCommand = new CommandBase(commandParam => this.PDFPrint(commandParam), () => true);
+            this.PlusPageCommand = new CommandBase(commandParam => this.OnPlusMinusPage(commandParam), () => true);
+            this.MinusPageCommand = new CommandBase(commandParam => this.OnPlusMinusPage(commandParam), () => true);
+            this.ResetCommand = new CommandBase(commandParam => this.OnReset(commandParam), () => true);
 
             this.DataContext = this;
         }
@@ -59,7 +67,10 @@ namespace MergePDF.View
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase OpenFolderCommand { get; private set; }
+        public CommandBase PlusPageCommand { get; private set; }
+        public CommandBase MinusPageCommand { get; private set; }
         public CommandBase PrintPDFCommand { get; private set; }
+        public CommandBase ResetCommand { get; private set; }
 
         public ObservableCollection<PDFFileItem> PDFFilesSource
         {
@@ -159,9 +170,34 @@ namespace MergePDF.View
             }
         }
 
+        private void OnPlusMinusPage(object commandParam)
+        {
+            if (commandParam != null && commandParam is CommandButtons button)
+            {
+                if (button == CommandButtons.PlusPage)
+                {
+                    if (this._document != null && this._currentPage < fpdfview.FPDF_GetPageCount(this._document) - 1)
+                    {
+                        this._currentPage++;
+                        this.RenderPage();
+                    }
+                }
+                else if (button == CommandButtons.MinusPage)
+                {
+                    if (this._document != null && this._currentPage > 0)
+                    {
+                        this._currentPage--;
+                        this.RenderPage();
+                    }
+                }
+
+                this.PDFPageInfo = $"{this._currentPage + 1}/{fpdfview.FPDF_GetPageCount(this._document)}";
+            }
+        }
+
         private void PDFPrint(object commandParam)
         {
-            if (this.PDFFilesSource.Count(f => f.IsSelectedItem == true) != 0)
+            if (this.PDFFilesSource.Count(f => f.IsSelectedItem == true) > 1)
             {
                 this.Message.Hinweis("PDF Drucken", "Bitte wählen nur eine PDF-Datei zum drucken aus.");
                 return;
@@ -173,45 +209,46 @@ namespace MergePDF.View
                 return;
             }
 
-            if (this.PDFFilesSource.Count(f => f.IsSelectedItem == true) > 1)
-            {
-                this.Message.Hinweis("PDF Drucken", "Bitte wählen Sie nur eine PDF-Datei aus.");
-                return;
-            }
-
             if (commandParam != null && commandParam is CommandButtons button)
             {
                 if (button == CommandButtons.PDFPrint)
                 {
                     if (this.PrintPageVarinate == PrintVariante.AllPages)
                     {
+                        this.PrintAllPagesHandler();
                     }
                     else if (this.PrintPageVarinate == PrintVariante.SinglePages)
                     {
+                        string splitRange = this.ParseTextBoxInput();
+                        if (string.IsNullOrEmpty(splitRange) == false)
+                        {
+                            this.PrintSelectedPage(splitRange);
+                        }
                     }
                     else if (this.PrintPageVarinate == PrintVariante.RangePages)
                     {
+                        string splitRange = this.ParseTextBoxInput();
+                        if (string.IsNullOrEmpty(splitRange) == false)
+                        {
+                            this.ExtractPages(splitRange);
+                        }
                     }
                 }
             }
+        }
 
-            var pages = new List<BitmapSource>();
-
-            // PDF öffnen
-            // Alle Seiten rendern
-            // BitmapSource-Liste füllen
-
-            int pageCount = fpdfview.FPDF_GetPageCount(this._document);
-
-            for (int i = 0; i < pageCount; i++)
+        private void OnReset(object commandParam)
+        {
+            if (commandParam != null && commandParam is CommandButtons button)
             {
-                pages.Add(RenderPdfPage(i));
+                if (button == CommandButtons.ResetInput)
+                {
+                    this.PrintPageVarinate = PrintVariante.None;
+                    this.PrintAllPages = false;
+                    this.SinglePages = string.Empty;
+                    this.ExtractRangePages = string.Empty;
+                }
             }
-
-            var printer = new PdfPrintService();
-
-            printer.Print(pages, this.SelectedPdfFile.Filename);
-
         }
 
         #endregion Command Events
@@ -524,5 +561,147 @@ namespace MergePDF.View
                 this.PrintPageVarinate = PrintVariante.None;
             }
         }
+
+        private string ParseTextBoxInput()
+        {
+            // 1. Text auslesen und Strichpunkte vereinheitlichen (Semikolon als Trenner)
+            string rawInput = string.IsNullOrEmpty(this.SinglePages) == false ? this.SinglePages : this.ExtractRangePages;
+
+            if (string.IsNullOrEmpty(rawInput))
+            {
+                rawInput = string.IsNullOrEmpty(this.ExtractRangePages) == false ? this.ExtractRangePages : this.SinglePages;
+            }
+
+            // 2. Zahlen und Bereiche extrahieren
+            var parsedNumbers = new HashSet<int>();
+            var parts = rawInput.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var part in parts)
+            {
+                // Wenn es ein Bereich (z.B. "1-3") ist
+                if (part.Contains("-"))
+                {
+                    var range = part.Split('-');
+                    if (range.Length == 2 &&
+                        int.TryParse(range[0], out int start) &&
+                        int.TryParse(range[1], out int end))
+                    {
+                        // Für den Fall, dass Start größer als Ende angegeben wurde
+                        if (start > end) { int temp = start; start = end; end = temp; }
+
+                        for (int i = start; i <= end; i++)
+                        {
+                            parsedNumbers.Add(i);
+                        }
+                    }
+                }
+                // Wenn es eine einzelne Zahl ist
+                else if (int.TryParse(part, out int singleNumber))
+                {
+                    parsedNumbers.Add(singleNumber);
+                }
+            }
+
+            // 3. Sortieren und zu einem String mit ';' zusammensetzen
+            string result = string.Join(";", parsedNumbers.OrderBy(n => n));
+
+            // 4. Ergebnis zurück in die TextBox schreiben (oder anderweitig verwenden)
+            return result;
+        }
+
+        private async void PrintAllPagesHandler()
+        {
+            if (this.SelectedPdfFile == null)
+            {
+                return;
+            }
+
+            if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+            {
+                string pageOK = $"PDF Datei {this.SelectedPdfFile} wird gedruckt";
+                await App.EventAgg.PublishAsync(new StatusEvent(pageOK));
+            }
+
+            // Alle Seiten rendern
+            // BitmapSource-Liste füllen
+            var pages = new List<BitmapSource>();
+
+            int pageCount = fpdfview.FPDF_GetPageCount(this._document);
+
+            for (int i = 0; i < pageCount; i++)
+            {
+                pages.Add(RenderPdfPage(i));
+            }
+
+            var printer = new PdfPrintService();
+
+            printer.Print(pages, this.SelectedPdfFile.Filename);
+        }
+
+        private async void PrintSelectedPage(string splitRange)
+        {
+            PDFFileItem SelectedPdfFile = this.PDFFilesSource.FirstOrDefault(f => f.IsSelectedItem == true);
+            List<int> printRangeSorce = splitRange.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
+            int endSeite = printRangeSorce.Last();
+            int pageCount = fpdfview.FPDF_GetPageCount(this._document);
+
+            if (endSeite > pageCount)
+            {
+                this.Message.Hinweis("PDF Drucken", $"Sie haben mehr Seiten angegeben, wie das Dokument hat. Anzahl Seiten: {pageCount}.");
+                return;
+            }
+
+
+            if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+            {
+                string pageOK = $"PDF Datei {this.SelectedPdfFile} wird gedruckt";
+                await App.EventAgg.PublishAsync(new StatusEvent(pageOK));
+            }
+
+            // Ausgewählte Seiten rendern
+            // BitmapSource-Liste füllen
+
+            var pages = new List<BitmapSource>();
+            foreach (int page in printRangeSorce)
+            {
+                pages.Add(RenderPdfPage(page));
+            }
+
+            var printer = new PdfPrintService();
+
+            printer.Print(pages, this.SelectedPdfFile.Filename);
+        }
+
+        private async void ExtractPages(string splitRange)
+        {
+            List<int> splitRangeSorce = splitRange.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
+
+            int startSeite = splitRangeSorce.First();
+            int endSeite = splitRangeSorce.Last();
+
+            if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+            {
+                string pageOK = $"PDF Datei {this.SelectedPdfFile} wird gedruckt";
+                await App.EventAgg.PublishAsync(new StatusEvent(pageOK));
+            }
+
+            var pages = new List<BitmapSource>();
+
+            // Sicherstellen, dass die Seiten im Original existieren
+            int pageCount = fpdfview.FPDF_GetPageCount(this._document);
+            if (endSeite < pageCount)
+            {
+                // 3. Seiten durchlaufen und zum Zieldokument hinzufügen
+                for (int i = startSeite; i <= endSeite; i++)
+                {
+                    pages.Add(RenderPdfPage(i));
+                }
+            }
+
+            var printer = new PdfPrintService();
+
+            printer.Print(pages, this.SelectedPdfFile.Filename);
+        }
+
     }
 }

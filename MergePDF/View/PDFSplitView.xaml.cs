@@ -15,15 +15,6 @@
 
 namespace MergePDF.View
 {
-    using MergePDF.Core;
-
-    using Microsoft.Win32;
-
-    using PDFiumCore;
-
-    using PdfSharpCore.Pdf;
-    using PdfSharpCore.Pdf.IO;
-
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Runtime.Versioning;
@@ -32,6 +23,15 @@ namespace MergePDF.View
     using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
+
+    using MergePDF.Core;
+
+    using Microsoft.Win32;
+
+    using PDFiumCore;
+
+    using PdfSharpCore.Pdf;
+    using PdfSharpCore.Pdf.IO;
 
     /// <summary>
     /// Interaktionslogik für PDFSplitView.xaml

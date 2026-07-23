@@ -116,6 +116,35 @@
                     Background="Gray" />
 
                 <Button
+                    Width="{StaticResource ResourceKey=ButtonSize}"
+                    Height="{StaticResource ResourceKey=ButtonSize}"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Command="{Binding Path=PlusPageCommand}"
+                    CommandParameter="{x:Static core:CommandButtons.PlusPage}"
+                    ToolTip="Nächste Seite">
+                    <Image Source="{StaticResource ResourceKey=IconSoftware_Plus2}" Stretch="Uniform" />
+                </Button>
+
+                <Button
+                    Width="{StaticResource ResourceKey=ButtonSize}"
+                    Height="{StaticResource ResourceKey=ButtonSize}"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Command="{Binding Path=MinusPageCommand}"
+                    CommandParameter="{x:Static core:CommandButtons.MinusPage}"
+                    ToolTip="Vorherige Seite">
+                    <Image Source="{StaticResource ResourceKey=IconSoftware_Minus2}" Stretch="Uniform" />
+                </Button>
+
+                <Border
+                    Width="1"
+                    Margin="5,0,0,0"
+                    Background="Gray" />
+
+                <Button
                     Grid.Column="0"
                     Width="{StaticResource ResourceKey=ButtonSize}"
                     Height="{StaticResource ResourceKey=ButtonSize}"
@@ -222,7 +251,7 @@
                         Margin="5,5,0,0"
                         Orientation="Horizontal">
                         <TextBlock FontWeight="Medium" Text="Alle Seite" />
-                        <CheckBox Margin="5,0,0,0" IsChecked="{Binding Path=SplitAllPages, UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Margin="5,0,0,0" IsChecked="{Binding Path=PrintAllPages, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
                     <Border
@@ -253,28 +282,6 @@
                         Margin="0,5,0,0"
                         Background="Gray" />
 
-                    <TextBlock
-                        Grid.Row="10"
-                        Margin="5,5,0,0"
-                        VerticalAlignment="Center"
-                        FontWeight="Medium"
-                        Text="Bereich von Seiten drucken"
-                        TextWrapping="Wrap" />
-
-                    <TextBox
-                        Grid.Row="11"
-                        Width="140"
-                        Height="25"
-                        Margin="5,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Text="{Binding Path=ExtractRangePages, UpdateSourceTrigger=PropertyChanged}" />
-
-                    <Border
-                        Grid.Row="12"
-                        Height="1"
-                        Margin="0,5,0,0"
-                        Background="Gray" />
 
                     <Button
                         Grid.Row="13"
