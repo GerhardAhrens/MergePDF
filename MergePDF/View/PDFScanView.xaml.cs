@@ -15,8 +15,12 @@
 
 namespace MergePDF.View
 {
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Diagnostics;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Data;
 
     using MergePDF.Core;
 
@@ -45,6 +49,18 @@ namespace MergePDF.View
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase SacnPDFCommand { get; private set; }
 
+        public ICollectionView ScannerSource
+        {
+            get => base.GetValue<ICollectionView>();
+            set => base.SetValue(value);
+        }
+
+        public ScannerInfo SelectedScanner
+        {
+            get => base.GetValue<ScannerInfo>();
+            set => base.SetValue(value);
+        }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         private MessageBase Message { get; } = new MessageBase();
         #endregion Properties
@@ -53,6 +69,30 @@ namespace MergePDF.View
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            List<ScannerInfo> scanners = new();
+            DeviceManager manager = new();
+            foreach (DeviceInfo deviceInfo in manager.DeviceInfos)
+            {
+                if (deviceInfo.Type == WiaDeviceType.ScannerDeviceType)
+                {
+                    foreach (Property prop in deviceInfo.Properties)
+                    {
+                        Debug.WriteLine($"{prop.Name}: {prop.get_Value()}");
+                    }
+
+                    ScannerInfo si = new();
+                    si.Name = deviceInfo.Properties["Name"].get_Value().ToString();
+                    si.Description = deviceInfo.Properties["Description"].get_Value().ToString();
+                    si.Manufacturer = deviceInfo.Properties["Manufacturer"].get_Value().ToString();
+                    si.Server = deviceInfo.Properties["Server"].get_Value().ToString();
+                    si.UniqueDeviceID = deviceInfo.Properties["Unique Device ID"].get_Value().ToString();
+                    si.DeviceInfo = deviceInfo;
+                    scanners.Add(si);
+                }
+            }
+
+            this.ScannerSource = CollectionViewSource.GetDefaultView(scanners);
+
             if (App.EventAgg.IsSubscription<StatusEvent>() == true)
             {
                 await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
@@ -86,16 +126,7 @@ namespace MergePDF.View
                 {
                     try
                     {
-                        var dialog = new CommonDialog();
-
-                        Device scanner = dialog.ShowSelectDevice(WiaDeviceType.ScannerDeviceType, true, false);
-
-                        if (scanner == null)
-                        {
-                            return;
-                        }
-                        
-
+                        Device scanner = SelectedScanner.DeviceInfo.Connect();
                         Item item = scanner.Items[1];
                     }
                     catch (Exception ex)
