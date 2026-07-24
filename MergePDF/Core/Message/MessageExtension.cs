@@ -54,6 +54,12 @@ namespace System.Windows
             return result;
         }
 
+        public static MessageBoxResult Error(this IMessageBase self, string titel, string message)
+        {
+            MessageBoxResult result = self.ShowMessage(titel, message, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+            return result;
+        }
+
         public static MessageBoxResult AppExitMessage(this IMessageBase self, string args = null)
         {
             MessageBoxResult result;

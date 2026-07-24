@@ -7,9 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MergePDF.View"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <system:Double x:Key="ButtonSize">40</system:Double>
+    </UserControl.Resources>
+
     <Grid
         x:Name="gridMain"
         Background="WhiteSmoke"
@@ -45,6 +51,24 @@
                     CommandParameter="{x:Static core:CommandButtons.GoBack}"
                     ToolTip="Zurück">
                     <Image Source="{StaticResource ResourceKey=IconGoBack}" Stretch="Uniform" />
+                </Button>
+
+                <Border
+                    Width="1"
+                    Margin="5,0,0,0"
+                    Background="Gray" />
+
+                <Button
+                    Grid.Column="0"
+                    Width="{StaticResource ResourceKey=ButtonSize}"
+                    Height="{StaticResource ResourceKey=ButtonSize}"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Command="{Binding Path=SacnPDFCommand}"
+                    CommandParameter="{x:Static core:CommandButtons.PDFScan}"
+                    ToolTip="PDF Scannen">
+                    <Image Source="{StaticResource ResourceKey=PdfScanIcon}" Stretch="Uniform" />
                 </Button>
 
             </DockPanel>

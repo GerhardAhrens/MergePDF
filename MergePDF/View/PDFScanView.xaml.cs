@@ -20,6 +20,8 @@ namespace MergePDF.View
 
     using MergePDF.Core;
 
+    using WIA;
+
     /// <summary>
     /// Interaktionslogik für PDFScan.xaml
     /// </summary>
@@ -34,14 +36,17 @@ namespace MergePDF.View
             this.CurrentCtorArgs = args;
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
+            this.SacnPDFCommand = new CommandBase(commandParam => this.OnSanPDF(commandParam), () => true);
 
             this.DataContext = this;
         }
 
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
-        
+        public CommandBase SacnPDFCommand { get; private set; }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
+        private MessageBase Message { get; } = new MessageBase();
         #endregion Properties
 
         #region Windows Events
@@ -72,6 +77,35 @@ namespace MergePDF.View
                 }
             }
         }
+
+        private void OnSanPDF(object commandParam)
+        {
+            if (commandParam != null && commandParam is CommandButtons button)
+            {
+                if (button == CommandButtons.PDFScan)
+                {
+                    try
+                    {
+                        var dialog = new CommonDialog();
+
+                        Device scanner = dialog.ShowSelectDevice(WiaDeviceType.ScannerDeviceType, true, false);
+
+                        if (scanner == null)
+                        {
+                            return;
+                        }
+                        
+
+                        Item item = scanner.Items[1];
+                    }
+                    catch (Exception ex)
+                    {
+                        this.Message.Error("Dokument Scannen", $"Es ist ein Problem mit einem Scannner aufgetreten \n{ex.Message}");
+                    }
+                }
+            }
+        }
+
         #endregion Command Events
 
     }
