@@ -72,6 +72,20 @@
                     <Image Source="{StaticResource ResourceKey=PdfScanIcon}" Stretch="Uniform" />
                 </Button>
 
+                <Border
+                    Width="1"
+                    Margin="5,0,0,0"
+                    Background="Gray" />
+
+                <base:ChooseBox
+                    Title="Merge PDF speichern unter ..."
+                    Width="400"
+                    Height="25"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    ChooseBoxType="Folder"
+                    Text="{Binding Path=SaveFolder, FallbackValue=~SaveFolder}" />
+
             </DockPanel>
         </GroupBox>
 

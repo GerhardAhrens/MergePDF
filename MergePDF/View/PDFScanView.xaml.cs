@@ -71,6 +71,12 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
+        public string SaveFolder
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         public string FileSuffix
         {
             get => base.GetValue<string>();
