@@ -122,13 +122,13 @@
                 <Grid
                     Grid.Column="1"
                     Background="LightBlue"
-                    ColumnDefinitions="150"
+                    ColumnDefinitions="160"
                     RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,auto,auto,*">
                     <TextBlock
                         Grid.Row="0"
                         Margin="5,0,0,0"
                         FontSize="13"
-                        FontWeight="Medium"
+                        FontWeight="Bold"
                         Text="Scan Optionen"
                         TextWrapping="Wrap" />
 
@@ -139,14 +139,33 @@
                         Background="Gray" />
 
                     <TextBlock
+                        Grid.Row="2"
+                        Margin="5,0,0,0"
+                        FontSize="13"
+                        FontWeight="Medium"
+                        Text="Scan automatisch speichern"
+                        TextWrapping="Wrap" />
+
+                    <CheckBox
                         Grid.Row="3"
+                        Margin="5,0,0,0"
+                        IsChecked="{Binding Path=SplitAllPages, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <Border
+                        Grid.Row="4"
+                        Height="1"
+                        Margin="0,5,0,0"
+                        Background="Gray" />
+
+                    <TextBlock
+                        Grid.Row="5"
                         Margin="5,0,0,0"
                         FontSize="13"
                         FontWeight="Medium"
                         Text="Scan als Datei speichern"
                         TextWrapping="Wrap" />
 
-                    <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <StackPanel Grid.Row="6" Orientation="Horizontal">
                         <TextBlock Text="PDF" />
                         <RadioButton
                             Margin="5,0,40,0"
@@ -160,13 +179,13 @@
                     </StackPanel>
 
                     <Border
-                        Grid.Row="5"
+                        Grid.Row="7"
                         Height="1"
                         Margin="0,5,0,0"
                         Background="Gray" />
 
                     <TextBlock
-                        Grid.Row="6"
+                        Grid.Row="8"
                         Margin="5,0,0,0"
                         FontSize="13"
                         FontWeight="Medium"
@@ -174,7 +193,7 @@
                         TextWrapping="Wrap" />
 
                     <TextBox
-                        Grid.Row="7"
+                        Grid.Row="9"
                         Width="140"
                         Height="25"
                         Margin="5,0,0,0"
@@ -183,14 +202,22 @@
                         VerticalContentAlignment="Center"
                         Text="{Binding Path=FileSuffix, UpdateSourceTrigger=PropertyChanged, FallbackValue=~Dateinamenzusatz}" />
 
+                    <TextBlock
+                        Grid.Row="11"
+                        Margin="5,0,0,0"
+                        FontSize="13"
+                        FontWeight="Medium"
+                        Text="yyyyMMdd_name_00001"
+                        TextWrapping="Wrap" />
+
                     <Border
-                        Grid.Row="8"
+                        Grid.Row="12"
                         Height="1"
                         Margin="0,5,0,0"
                         Background="Gray" />
 
                     <Button
-                        Grid.Row="9"
+                        Grid.Row="13"
                         Width="{StaticResource ResourceKey=ButtonSize}"
                         Height="{StaticResource ResourceKey=ButtonSize}"
                         Margin="0,10,0,0"

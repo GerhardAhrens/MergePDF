@@ -230,13 +230,13 @@
                 <Grid
                     Grid.Column="1"
                     Background="LightBlue"
-                    ColumnDefinitions="150"
+                    ColumnDefinitions="170"
                     RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,auto,auto,*">
                     <TextBlock
                         Grid.Row="0"
                         Margin="5,0,0,0"
                         FontSize="13"
-                        FontWeight="Medium"
+                        FontWeight="Bold"
                         Text="Angaben, welche Seiten gedruckt werden soll"
                         TextWrapping="Wrap" />
 
@@ -269,7 +269,7 @@
 
                     <TextBox
                         Grid.Row="5"
-                        Width="140"
+                        Width="160"
                         Height="25"
                         Margin="5,0,0,0"
                         HorizontalAlignment="Left"
