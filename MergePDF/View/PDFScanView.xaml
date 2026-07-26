@@ -260,7 +260,7 @@
                     Source="{Binding Path=ScannedImage}"
                     Stretch="None">
                     <Image.LayoutTransform>
-                        <ScaleTransform ScaleX="0.5" ScaleY="0.5" />
+                        <ScaleTransform ScaleX="0.6" ScaleY="0.6" />
                     </Image.LayoutTransform>
                 </Image>
             </ScrollViewer>

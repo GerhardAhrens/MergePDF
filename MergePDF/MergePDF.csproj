@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\PDFViewer\PDFViewer\PdfPrintService.cs" Link="Core\PdfPrintService.cs" />
+    <Compile Include="..\..\SnippetManager\SnippetManager\Converter\ToPngConverter.cs" Link="Core\Converter\ToPngConverter.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +54,7 @@
 
   <ItemGroup>
     <Folder Include="Core\Controls\Themes\" />
+    <Folder Include="Core\Converter\" />
   </ItemGroup>
 
 </Project>

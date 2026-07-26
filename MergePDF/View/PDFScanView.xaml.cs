@@ -22,6 +22,7 @@ namespace MergePDF.View
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
+    using System.Windows.Media;
     using System.Windows.Media.Imaging;
 
     using MergePDF.Core;
@@ -116,6 +117,11 @@ namespace MergePDF.View
                 si.Description = "oder Offline";
                 scanners.Add(si);
                 this.BtnScanPDF.IsEnabled = false;
+                DrawingImage noScan = (DrawingImage)Application.Current.TryFindResource("NoScannerImage");
+                this.PdfImage.Height = 500;
+                this.PdfImage.Width = 500;
+                this.PdfImage.Source = noScan;
+                this.PdfImage.Stretch = Stretch.Uniform;
             }
 
             this.ScannerSource = CollectionViewSource.GetDefaultView(scanners);
