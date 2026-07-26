@@ -200,7 +200,10 @@ namespace MergePDF.View
             {
                 if (button == CommandButtons.SavePDF)
                 {
-
+                    if (this.PdfImage.Source != null)
+                    {
+                        ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, @"c:\temp\test.png");
+                    }
                 }
             }
         }
