@@ -163,7 +163,7 @@
                     <CheckBox
                         Grid.Row="3"
                         Margin="5,0,0,0"
-                        IsChecked="{Binding Path=SplitAllPages, UpdateSourceTrigger=PropertyChanged}" />
+                        IsChecked="{Binding Path=AutomaticSave, UpdateSourceTrigger=PropertyChanged}" />
 
                     <Border
                         Grid.Row="4"
@@ -184,12 +184,12 @@
                         <RadioButton
                             Margin="5,0,40,0"
                             GroupName="SAVEFILE"
-                            IsChecked="True" />
+                            IsChecked="{Binding Path=IsPDF, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Text="PNG" />
                         <RadioButton
                             Margin="5,0,5,0"
                             GroupName="SAVEFILE"
-                            IsChecked="False" />
+                            IsChecked="{Binding Path=IsPNG, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
                     <Border

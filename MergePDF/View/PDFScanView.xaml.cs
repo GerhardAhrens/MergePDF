@@ -16,7 +16,6 @@
 namespace MergePDF.View
 {
     using System.ComponentModel;
-    using System.Diagnostics;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Windows;
@@ -84,6 +83,24 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
+        public bool IsPNG
+        {
+            get => base.GetValue<bool>();
+            set => base.SetValue(value);
+        }
+
+        public bool IsPDF
+        {
+            get => base.GetValue<bool>();
+            set => base.SetValue(value);
+        }
+
+        public bool AutomaticSave
+        {
+            get => base.GetValue<bool>();
+            set => base.SetValue(value);
+        }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         private MessageBase Message { get; } = new MessageBase();
         #endregion Properties
@@ -92,6 +109,11 @@ namespace MergePDF.View
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            this.AutomaticSave = true;
+            this.IsPNG = false;
+            this.IsPDF = true;
+            this.FileSuffix = "Document";
+
             List<ScannerInfo> scanners = new();
             DeviceManager manager = new();
 
@@ -196,13 +218,36 @@ namespace MergePDF.View
 
         private void OnSaveFile(object commandParam)
         {
+            if (string.IsNullOrEmpty(this.SaveFolder) == true)
+            {
+                this.Message.Warning("Scan Speichern", "Es wurde keine Verzeichnis zum Speichern ausgewählt.");
+                return;
+            }
+
             if (commandParam != null && commandParam is CommandButtons button)
             {
                 if (button == CommandButtons.SavePDF)
                 {
                     if (this.PdfImage.Source != null)
                     {
-                        ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, @"c:\temp\test.png");
+                        if (this.AutomaticSave == true)
+                        {
+                            if (this.IsPDF == true && this.IsPNG == false)
+                            {
+                                string filenamePattern = $"{DateTime.Now:yyyyMMdd}_{this.FileSuffix}_{{000}}.pdf";
+                                string newFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
+
+                            }
+                            else if (this.IsPDF == false && this.IsPNG == true)
+                            {
+                                string filenamePattern = $"{DateTime.Now:yyyyMMdd}_{this.FileSuffix}_{{000}}.png";
+                                string newFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
+                                ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, newFilename);
+                            }
+                        }
+                        else
+                        {
+                        }
                     }
                 }
             }
