@@ -17,7 +17,9 @@ namespace MergePDF.View
 {
     using System.ComponentModel;
     using System.IO;
+    using System.Net.Http;
     using System.Runtime.InteropServices;
+    using System.ServiceProcess;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
@@ -116,11 +118,24 @@ namespace MergePDF.View
 
             List<ScannerInfo> scanners = new();
             DeviceManager manager = new();
+            ServiceController sc = new("stisvc");
+
+            if (sc.Status != ServiceControllerStatus.Running)
+            {
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    await App.EventAgg.PublishAsync(new StatusEvent("Windows Image Acquisition (WIA, stisvc) funktioniert nicht"));
+                }
+
+                return;
+            }
 
             foreach (DeviceInfo deviceInfo in manager.DeviceInfos)
             {
                 if (deviceInfo.Type == WiaDeviceType.ScannerDeviceType)
                 {
+                    Device device = await ConnectWithTimeoutAsync(deviceInfo, TimeSpan.FromSeconds(5));
+
                     ScannerInfo si = new();
                     si.Name = deviceInfo.Properties["Name"].get_Value().ToString();
                     si.Description = deviceInfo.Properties["Description"].get_Value().ToString();
@@ -128,7 +143,20 @@ namespace MergePDF.View
                     si.Server = deviceInfo.Properties["Server"].get_Value().ToString();
                     si.UniqueDeviceID = deviceInfo.Properties["Unique Device ID"].get_Value().ToString();
                     si.DeviceInfo = deviceInfo;
-                    scanners.Add(si);
+                    si.IP_Adresse = "192.168.178.20";
+                    try
+                    {
+                        /*
+                        using HttpClient client = new();
+                        await client.GetAsync($"http://{si.IP_Adresse}/");
+                        */
+
+                        scanners.Add(si);
+                    }
+                    catch (COMException)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -255,7 +283,7 @@ namespace MergePDF.View
 
         #endregion Command Events
 
-        public (bool,string) IsScannerOnline(DeviceInfo deviceInfo)
+        private (bool,string) IsScannerOnline(DeviceInfo deviceInfo)
         {
             bool result = false;
             string errorText = string.Empty;
@@ -301,6 +329,37 @@ namespace MergePDF.View
                 errorText = "Unbekanter Fehler";
                 return (result, errorText);
             }
+        }
+
+        private async Task<Device> ConnectWithTimeoutAsync(DeviceInfo deviceInfo, TimeSpan timeout)
+        {
+            var tcs = new TaskCompletionSource<Device>();
+
+            Thread thread = new(() =>
+            {
+                try
+                {
+                    Device device = deviceInfo.Connect();
+                    tcs.TrySetResult(device);
+                }
+                catch (Exception ex)
+                {
+                    tcs.TrySetException(ex);
+                }
+            });
+
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.IsBackground = true;
+            thread.Start();
+
+            Task finished = await Task.WhenAny(tcs.Task, Task.Delay(timeout));
+
+            if (finished == tcs.Task)
+            {
+                return await tcs.Task;
+            }
+
+            return null;
         }
     }
 }

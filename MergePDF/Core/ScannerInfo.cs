@@ -13,7 +13,7 @@
         public string Server { get; set; } = string.Empty;
         public string UniqueDeviceID { get; set; } = string.Empty;
         public DeviceInfo DeviceInfo { get; set; } = null!;
-
+        public string IP_Adresse { get; set; } = string.Empty;
 
         public override string ToString()
         {
