@@ -16,6 +16,7 @@
 namespace MergePDF.View
 {
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.IO;
     using System.Net.Http;
     using System.Runtime.InteropServices;
@@ -27,6 +28,9 @@ namespace MergePDF.View
     using System.Windows.Media.Imaging;
 
     using MergePDF.Core;
+
+    using PdfSharpCore.Drawing;
+    using PdfSharpCore.Pdf;
 
     using WIA;
 
@@ -142,16 +146,39 @@ namespace MergePDF.View
                     si.Manufacturer = deviceInfo.Properties["Manufacturer"].get_Value().ToString();
                     si.Server = deviceInfo.Properties["Server"].get_Value().ToString();
                     si.UniqueDeviceID = deviceInfo.Properties["Unique Device ID"].get_Value().ToString();
+                    si.RemoteDeviceID = deviceInfo.Properties["Remote Device ID"].get_Value().ToString();
+                    si.Type = deviceInfo.Properties["Type"].get_Value().ToString();
+                    si.Port = deviceInfo.Properties["Port"].get_Value().ToString();
+                    si.HardwareConfiguration = deviceInfo.Properties["Hardware Configuration"].get_Value().ToString();
                     si.DeviceInfo = deviceInfo;
                     si.IP_Adresse = "192.168.178.20";
+
+                    if (si.UniqueDeviceID.StartsWith("{",StringComparison.OrdinalIgnoreCase) == true && si.UniqueDeviceID.Contains("}",StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        continue;
+                    }
+
+                    foreach (Property property in deviceInfo.Properties)
+                    {
+                        Debug.WriteLine($"{property.PropertyID,5}: {property.Name,-30} = {property.get_Value().ToString()}");
+                    }
+
                     try
                     {
-                        /*
-                        using HttpClient client = new();
-                        await client.GetAsync($"http://{si.IP_Adresse}/");
-                        */
-
-                        scanners.Add(si);
+                        if (GetConnectionType(deviceInfo) == ScannerConnectionType.Network)
+                        {
+                            if (string.IsNullOrEmpty(si.IP_Adresse) == false)
+                            {
+                                if (await IsEsclAvailableAsync(si.IP_Adresse) == true)
+                                {
+                                    scanners.Add(si);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            scanners.Add(si);
+                        }
                     }
                     catch (COMException)
                     {
@@ -175,12 +202,20 @@ namespace MergePDF.View
             }
 
             this.ScannerSource = CollectionViewSource.GetDefaultView(scanners);
+            this.ScannerSource.MoveCurrentToFirst();
+            if (this.ListBoxScanner.Items.Count > 0)
+            {
+                this.ListBoxScanner.Focus();
+                this.ListBoxScanner.SelectedIndex = 0;
+            }
+
 
             if (App.EventAgg.IsSubscription<StatusEvent>() == true)
             {
                 await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
             }
         }
+
         #endregion Windows Events
 
         #region Command Events
@@ -207,33 +242,69 @@ namespace MergePDF.View
             {
                 if (button == CommandButtons.PDFScan)
                 {
+                    if (string.IsNullOrEmpty(this.SaveFolder) == true)
+                    {
+                        this.Message.Warning("Scan Speichern", "Es wurde keine Verzeichnis zum Speichern ausgewählt.");
+                        return;
+                    }
+
                     try
                     {
-                        (bool, string) isOk = IsScannerOnline(this.SelectedScanner.DeviceInfo);
-                        if (isOk.Item1 == true)
+                        if (this.AutomaticSave == true)
                         {
-                            Device scanner = this.SelectedScanner.DeviceInfo.Connect();
-                            Item item = scanner.Items[1];
+                            (bool, string) isOk = IsScannerOnline(this.SelectedScanner.DeviceInfo);
+                            if (isOk.Item1 == true)
+                            {
+                                Device scanner = this.SelectedScanner.DeviceInfo.Connect();
+                                Item item = scanner.Items[1];
 
-                            string format = "{B96B3CAF-0728-11D3-9D7B-0000F81EF32E}"; // PNG
-                            ImageFile image = (ImageFile)new CommonDialog().ShowTransfer(item, format, false);
+                                /*
+                                foreach (Property property in item.Properties)
+                                {
+                                    Debug.WriteLine($"{property.PropertyID,5}: {property.Name,-30} = {property.get_Value().ToString()}");
+                                }
+                                */
 
-                            byte[] bytes = (byte[])image.FileData.get_BinaryData();
+                                string format = "{B96B3CAF-0728-11D3-9D7B-0000F81EF32E}"; // PNG
+                                ImageFile image = (ImageFile)new CommonDialog().ShowTransfer(item, format, false);
 
-                            using MemoryStream ms = new(bytes);
+                                byte[] bytes = (byte[])image.FileData.get_BinaryData();
 
-                            BitmapImage bitmap = new();
-                            bitmap.BeginInit();
-                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                            bitmap.StreamSource = ms;
-                            bitmap.EndInit();
-                            bitmap.Freeze();
+                                using MemoryStream ms = new(bytes);
 
-                            this.ScannedImage = bitmap;
-                        }
-                        else
-                        {
-                            this.Message.Error("Dokument scannen", isOk.Item2);
+                                BitmapImage bitmap = new();
+                                bitmap.BeginInit();
+                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmap.StreamSource = ms;
+                                bitmap.EndInit();
+                                bitmap.Freeze();
+
+                                this.ScannedImage = bitmap;
+
+                                if (this.IsPDF == true && this.IsPNG == false)
+                                {
+                                    string filenamePattern = $"{DateTime.Now:yyyyMMdd}_{this.FileSuffix}_{{000}}.pdf";
+                                    string newPdfFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
+                                    string tempFileName = Path.Combine(this.SaveFolder, Path.GetTempFileName());
+                                    ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, tempFileName);
+                                    this.CreatePdf(tempFileName, newPdfFilename);
+                                    if (File.Exists(newPdfFilename) == true)
+                                    {
+                                        File.Delete(tempFileName);
+                                    }
+
+                                }
+                                else if (this.IsPDF == false && this.IsPNG == true)
+                                {
+                                    string filenamePattern = $"{DateTime.Now:yyyyMMdd}_{this.FileSuffix}_{{000}}.png";
+                                    string newFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
+                                    ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, newFilename);
+                                }
+                            }
+                            else
+                            {
+                                this.Message.Error("Dokument scannen", isOk.Item2);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -263,8 +334,14 @@ namespace MergePDF.View
                             if (this.IsPDF == true && this.IsPNG == false)
                             {
                                 string filenamePattern = $"{DateTime.Now:yyyyMMdd}_{this.FileSuffix}_{{000}}.pdf";
-                                string newFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
-
+                                string newPdfFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
+                                string tempFileName = Path.Combine(this.SaveFolder, Path.GetTempFileName());
+                                ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, tempFileName);
+                                this.CreatePdf(tempFileName, newPdfFilename);
+                                if (File.Exists(newPdfFilename) == true)
+                                {
+                                    File.Delete(tempFileName);
+                                }
                             }
                             else if (this.IsPDF == false && this.IsPNG == true)
                             {
@@ -283,7 +360,7 @@ namespace MergePDF.View
 
         #endregion Command Events
 
-        private (bool,string) IsScannerOnline(DeviceInfo deviceInfo)
+        private (bool, string) IsScannerOnline(DeviceInfo deviceInfo)
         {
             bool result = false;
             string errorText = string.Empty;
@@ -361,5 +438,91 @@ namespace MergePDF.View
 
             return null;
         }
+
+        private void CreatePdf(string imageFile, string pdfFile)
+        {
+            PdfDocument document = new();
+
+            PdfPage page = document.AddPage();
+
+            using XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            using XImage image = XImage.FromFile(imageFile);
+
+            double ratio = Math.Min(
+                page.Width / image.PixelWidth,
+                page.Height / image.PixelHeight);
+
+            double width = image.PixelWidth * ratio;
+            double height = image.PixelHeight * ratio;
+
+            gfx.DrawImage(image, 0, 0, width, height);
+
+            document.Save(pdfFile);
+        }
+
+        private async Task<bool> IsEsclAvailableAsync(string ipAddress, CancellationToken cancellationToken = default)
+        {
+            using HttpClient client = new()
+            {
+                Timeout = TimeSpan.FromSeconds(3)
+            };
+
+            try
+            {
+                using HttpResponseMessage response = await client.GetAsync($"http://{ipAddress}/eSCL/ScannerStatus", cancellationToken);
+
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private ScannerConnectionType GetConnectionType( DeviceInfo deviceInfo)
+        {
+            string port = GetProperty(deviceInfo, 6);
+            string deviceId = GetProperty(deviceInfo, 2);
+
+            string value = $"{port} {deviceId}".ToLowerInvariant();
+
+            if (value.Contains("usb", StringComparison.OrdinalIgnoreCase))
+            {
+                return ScannerConnectionType.Usb;
+            }
+
+            if (value.Contains("wsd", StringComparison.OrdinalIgnoreCase) ||
+                value.Contains("tcp", StringComparison.OrdinalIgnoreCase) ||
+                value.Contains("ip_", StringComparison.OrdinalIgnoreCase) ||
+                value.Contains("http", StringComparison.OrdinalIgnoreCase) ||
+                value.Contains("network", StringComparison.OrdinalIgnoreCase) ||
+                value.Contains(@"SWD\Escl\", StringComparison.OrdinalIgnoreCase))
+            {
+                return ScannerConnectionType.Network;
+            }
+
+            return ScannerConnectionType.Unknown;
+        }
+
+        private static string GetProperty(DeviceInfo info, int propertyId)
+        {
+            foreach (Property property in info.Properties)
+            {
+                if (property.PropertyID == propertyId)
+                {
+                    return property.get_Value()?.ToString() ?? string.Empty;
+                }
+            }
+
+            return string.Empty;
+        }
+    }
+
+    public enum ScannerConnectionType
+    {
+        Unknown,
+        Usb,
+        Network
     }
 }
