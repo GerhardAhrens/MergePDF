@@ -109,6 +109,7 @@ namespace MergePDF.View
 
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         private MessageBase Message { get; } = new MessageBase();
+        private ApplicationSettings Settings { get; set; }
         #endregion Properties
 
         #region Windows Events
@@ -118,7 +119,14 @@ namespace MergePDF.View
             this.AutomaticSave = true;
             this.IsPNG = false;
             this.IsPDF = true;
-            this.FileSuffix = "Document";
+
+            this.FileSuffix = string.IsNullOrEmpty(App.Settings.FileSuffix) == false ? App.Settings.FileSuffix : "Dokument";
+            this.SaveFolder = string.IsNullOrEmpty(App.Settings.LastScanFolder) == false ? App.Settings.LastScanFolder : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+            {
+                await App.EventAgg.PublishAsync(new StatusEvent("Suche nach betriebsbereiten Scanner"));
+            }
 
             List<ScannerInfo> scanners = new();
             DeviceManager manager = new();
@@ -138,7 +146,15 @@ namespace MergePDF.View
             {
                 if (deviceInfo.Type == WiaDeviceType.ScannerDeviceType)
                 {
+                    App.DoEvents();
                     Device device = await ConnectWithTimeoutAsync(deviceInfo, TimeSpan.FromSeconds(5));
+                    App.DoEvents();
+                    if (device == null)
+                    {
+                        string scannerName = deviceInfo.Properties["Description"].get_Value().ToString();
+                        this.Message.Error("Dokument Scannen", $"Es ist ein Problem mit dem Scannner \n{scannerName}\n aufgetreten");
+                        return;
+                    }
 
                     ScannerInfo si = new();
                     si.Name = deviceInfo.Properties["Name"].get_Value().ToString();
@@ -158,10 +174,12 @@ namespace MergePDF.View
                         continue;
                     }
 
+                    /*
                     foreach (Property property in deviceInfo.Properties)
                     {
                         Debug.WriteLine($"{property.PropertyID,5}: {property.Name,-30} = {property.get_Value().ToString()}");
                     }
+                    */
 
                     try
                     {
@@ -300,10 +318,49 @@ namespace MergePDF.View
                                     string newFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
                                     ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, newFilename);
                                 }
+
+                                this.Settings = App.Settings;
+                                this.Settings.FileSuffix = this.FileSuffix;
+                                this.Settings.LastScanFolder = this.SaveFolder;
+                                using (ApplicationSettings settings = new ApplicationSettings())
+                                {
+                                    if (settings.IsExitSettings() == true)
+                                    {
+                                        settings.SetSetting(Settings);
+                                        settings.Save();
+                                    }
+                                }
+
                             }
                             else
                             {
                                 this.Message.Error("Dokument scannen", isOk.Item2);
+                            }
+                        }
+                        else
+                        {
+                            (bool, string) isOk = IsScannerOnline(this.SelectedScanner.DeviceInfo);
+                            if (isOk.Item1 == true)
+                            {
+                                Device scanner = this.SelectedScanner.DeviceInfo.Connect();
+                                Item item = scanner.Items[1];
+
+                                string format = "{B96B3CAF-0728-11D3-9D7B-0000F81EF32E}"; // PNG
+                                ImageFile image = (ImageFile)new CommonDialog().ShowTransfer(item, format, false);
+
+                                byte[] bytes = (byte[])image.FileData.get_BinaryData();
+
+                                using MemoryStream ms = new(bytes);
+
+                                BitmapImage bitmap = new();
+                                bitmap.BeginInit();
+                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmap.StreamSource = ms;
+                                bitmap.EndInit();
+                                bitmap.Freeze();
+
+                                this.ScannedImage = bitmap;
+                                App.DoEvents();
                             }
                         }
                     }
@@ -329,29 +386,35 @@ namespace MergePDF.View
                 {
                     if (this.PdfImage.Source != null)
                     {
-                        if (this.AutomaticSave == true)
+                        if (this.IsPDF == true && this.IsPNG == false)
                         {
-                            if (this.IsPDF == true && this.IsPNG == false)
+                            string filenamePattern = $"{DateTime.Now:yyyyMMdd}_{this.FileSuffix}_{{000}}.pdf";
+                            string newPdfFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
+                            string tempFileName = Path.Combine(this.SaveFolder, Path.GetTempFileName());
+                            ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, tempFileName);
+                            this.CreatePdf(tempFileName, newPdfFilename);
+                            if (File.Exists(newPdfFilename) == true)
                             {
-                                string filenamePattern = $"{DateTime.Now:yyyyMMdd}_{this.FileSuffix}_{{000}}.pdf";
-                                string newPdfFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
-                                string tempFileName = Path.Combine(this.SaveFolder, Path.GetTempFileName());
-                                ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, tempFileName);
-                                this.CreatePdf(tempFileName, newPdfFilename);
-                                if (File.Exists(newPdfFilename) == true)
-                                {
-                                    File.Delete(tempFileName);
-                                }
-                            }
-                            else if (this.IsPDF == false && this.IsPNG == true)
-                            {
-                                string filenamePattern = $"{DateTime.Now:yyyyMMdd}_{this.FileSuffix}_{{000}}.png";
-                                string newFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
-                                ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, newFilename);
+                                File.Delete(tempFileName);
                             }
                         }
-                        else
+                        else if (this.IsPDF == false && this.IsPNG == true)
                         {
+                            string filenamePattern = $"{DateTime.Now:yyyyMMdd}_{this.FileSuffix}_{{000}}.png";
+                            string newFilename = FileNameGenerator.GetNextFileName(this.SaveFolder, filenamePattern);
+                            ToPngConverter.SaveImageSourceToPng(this.PdfImage.Source, newFilename);
+                        }
+
+                        this.Settings = App.Settings;
+                        this.Settings.FileSuffix = this.FileSuffix;
+                        this.Settings.LastScanFolder = this.SaveFolder;
+                        using (ApplicationSettings settings = new ApplicationSettings())
+                        {
+                            if (settings.IsExitSettings() == true)
+                            {
+                                settings.SetSetting(Settings);
+                                settings.Save();
+                            }
                         }
                     }
                 }
