@@ -113,12 +113,16 @@ namespace MergePDF.View
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
 
         private MessageBase Message { get; } = new MessageBase();
+        private ApplicationSettings Settings { get; set; }
         #endregion Properties
 
         #region Windows Events
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            string dfFolder = string.IsNullOrEmpty(App.Settings.LastScanFolder) == false ? App.Settings.LastScanFolder : string.Empty;
+            this.LoadFileToListbox(dfFolder);
+
             if (App.EventAgg.IsSubscription<StatusEvent>() == true)
             {
                 await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
@@ -154,6 +158,18 @@ namespace MergePDF.View
             if (dlg.ShowDialog() == true)
             {
                 string selectedFolderPath = dlg.FolderName;
+
+                this.Settings = App.Settings;
+                this.Settings.LastScanFolder = selectedFolderPath;
+                using (ApplicationSettings settings = new ApplicationSettings())
+                {
+                    if (settings.IsExitSettings() == true)
+                    {
+                        settings.SetSetting(Settings);
+                        settings.Save();
+                    }
+                }
+
                 this.LoadFileToListbox(selectedFolderPath);
             }
         }
@@ -257,6 +273,11 @@ namespace MergePDF.View
         #region Laden der PDF Dateien zum Rendern
         private async void LoadFileToListbox(string folderPath)
         {
+            if (string.IsNullOrEmpty(folderPath) == true)
+            {
+                return;
+            }
+
             PDFFileItem fitem;
             List<PDFFileItem> files = new();
             IEnumerable<string> filesFolder = Directory.EnumerateFiles(folderPath, "*.pdf", SearchOption.AllDirectories);
