@@ -21,7 +21,7 @@
             this.SelectedIndex = -1;
             this.Width = 100;
             this.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-            this.Height = 20;
+            this.Height = 22;
             this.IsEditable = true;
             this.IsReadOnly = true; // Verhindert die Eingabe von benutzerdefiniertem Text
             this.FontWeight = FontWeights.Bold;

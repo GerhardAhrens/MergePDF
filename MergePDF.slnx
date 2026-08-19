@@ -3,7 +3,9 @@
     <File Path="LICENSE.txt" />
     <File Path="MainWindow.png" />
     <File Path="MergePDFView.png" />
+    <File Path="PrintPDF.png" />
     <File Path="README.md" />
+    <File Path="ScanPDF.png" />
     <File Path="SplitPDFView.png" />
   </Folder>
   <Project Path="MergePDF/MergePDF.csproj" />

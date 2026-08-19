@@ -89,6 +89,12 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
+        public string NetworkScanner
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         public bool IsPNG
         {
             get => base.GetValue<bool>();
@@ -122,6 +128,7 @@ namespace MergePDF.View
 
             this.FileSuffix = string.IsNullOrEmpty(App.Settings.FileSuffix) == false ? App.Settings.FileSuffix : "Dokument";
             this.SaveFolder = string.IsNullOrEmpty(App.Settings.LastScanFolder) == false ? App.Settings.LastScanFolder : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            this.NetworkScanner = string.IsNullOrEmpty(App.Settings.NetworkScanner) == false ? App.Settings.NetworkScanner : string.Empty;
 
             if (App.EventAgg.IsSubscription<StatusEvent>() == true)
             {
@@ -146,16 +153,6 @@ namespace MergePDF.View
             {
                 if (deviceInfo.Type == WiaDeviceType.ScannerDeviceType)
                 {
-                    App.DoEvents();
-                    Device device = await ConnectWithTimeoutAsync(deviceInfo, TimeSpan.FromSeconds(5));
-                    App.DoEvents();
-                    if (device == null)
-                    {
-                        string scannerName = deviceInfo.Properties["Description"].get_Value().ToString();
-                        this.Message.Error("Dokument Scannen", $"Es ist ein Problem mit dem Scannner \n{scannerName}\n aufgetreten");
-                        return;
-                    }
-
                     ScannerInfo si = new();
                     si.Name = deviceInfo.Properties["Name"].get_Value().ToString();
                     si.Description = deviceInfo.Properties["Description"].get_Value().ToString();
@@ -167,7 +164,6 @@ namespace MergePDF.View
                     si.Port = deviceInfo.Properties["Port"].get_Value().ToString();
                     si.HardwareConfiguration = deviceInfo.Properties["Hardware Configuration"].get_Value().ToString();
                     si.DeviceInfo = deviceInfo;
-                    si.IP_Adresse = "192.168.178.20";
 
                     if (si.UniqueDeviceID.StartsWith("{",StringComparison.OrdinalIgnoreCase) == true && si.UniqueDeviceID.Contains("}",StringComparison.OrdinalIgnoreCase) == true)
                     {
@@ -181,14 +177,26 @@ namespace MergePDF.View
                     }
                     */
 
+                    App.DoEvents();
+
                     try
                     {
                         if (GetConnectionType(deviceInfo) == ScannerConnectionType.Network)
                         {
+                            si.IP_Adresse = this.NetworkScanner;
+
                             if (string.IsNullOrEmpty(si.IP_Adresse) == false)
                             {
-                                if (await IsEsclAvailableAsync(si.IP_Adresse) == true)
+                                if (await this.IsEsclAvailableAsync(si.IP_Adresse) == true)
                                 {
+                                    Device device = await ConnectWithTimeoutAsync(deviceInfo, TimeSpan.FromSeconds(5));
+                                    if (device == null)
+                                    {
+                                        string scannerName = deviceInfo.Properties["Description"].get_Value().ToString();
+                                        this.Message.Error("Dokument Scannen", $"Es ist ein Problem mit dem Scannner \n{scannerName}\n aufgetreten");
+                                        continue;
+                                    }
+
                                     scanners.Add(si);
                                 }
                             }

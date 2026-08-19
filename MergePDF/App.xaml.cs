@@ -192,6 +192,8 @@ namespace MergePDF
                     settings.LetzterZugriff = DateTime.Now;
                     settings.FrageExit = true;
                     settings.FileSuffix = "Seite";
+                    settings.LastScanFolder = string.Empty;
+                    settings.NetworkScanner = string.Empty;
                     settings.Save();
                 }
                 else

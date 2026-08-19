@@ -28,6 +28,8 @@ Es können einzelne PDF Dateien in eine neue PDF Datei zusammengeführt werden. 
 
 ## Scannen von PDF Dokumenten
 
+![Scan Dialog](ScanPDF.png)
+
 # Hinweis
 Ein bearbeiten der PDF Datei ist mit diesem Tool nicht möglich. Es können nur PDF Dateien zusammengeführt, gesplittet oder extrahiert werden werden.
 # zusätzliche NuGet-Pakete
