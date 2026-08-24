@@ -111,7 +111,6 @@ namespace MergePDF.View
         }
 
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
-
         private MessageBase Message { get; } = new MessageBase();
         private ApplicationSettings Settings { get; set; }
         #endregion Properties

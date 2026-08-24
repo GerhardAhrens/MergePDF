@@ -470,6 +470,75 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
+    <DrawingImage x:Key="CreatePdfIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+
+                <!--  =========================  -->
+                <!--  Neues PDF-Dokument  -->
+                <!--  =========================  -->
+
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#606060" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M5,3
+                            L14,3
+                            L17,6
+                            L17,21
+                            L5,21 Z
+                            M14,3
+                            L14,6
+                            L17,6
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  PDF-Kopf  -->
+                <GeometryDrawing Brush="#D32F2F">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="5,3,12,3.5" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  =========================  -->
+                <!--  Dokument-Inhalt  -->
+                <!--  =========================  -->
+
+                <GeometryDrawing Brush="#B0B0B0">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="8,10,6,0.8" />
+                            <RectangleGeometry Rect="8,13,6,0.8" />
+                            <RectangleGeometry Rect="8,16,4,0.8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  =========================  -->
+                <!--  Pluszeichen  -->
+                <!--  =========================  -->
+
+                <GeometryDrawing Brush="#1976D2">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+
+                            <!--  Vertikaler Balken  -->
+                            <RectangleGeometry Rect="19,14,2,8" />
+
+                            <!--  Horizontaler Balken  -->
+                            <RectangleGeometry Rect="16,17,8,2" />
+
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
     <DrawingImage x:Key="IconOffice_Folder_open_64">
         <DrawingImage.Drawing>
             <DrawingGroup>
