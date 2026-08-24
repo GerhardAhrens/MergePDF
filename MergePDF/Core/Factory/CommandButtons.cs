@@ -24,6 +24,8 @@
         PDFPrint = 8,
         [Description("PDF Scannen")]
         PDFScan = 9,
+        [Description("Images in PDF konvertieren")]
+        PDFCreate = 10,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]
