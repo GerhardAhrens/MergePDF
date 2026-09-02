@@ -167,7 +167,7 @@
                     Background="Transparent"
                     Command="{Binding Path=CreatePDFCommand}"
                     CommandParameter="{x:Static core:CommandButtons.PDFCreate}"
-                    ToolTip="PDF Drucken">
+                    ToolTip="PDF aus Images erstellen">
                     <Image Source="{StaticResource ResourceKey=CreatePdfIcon}" Stretch="Uniform" />
                 </Button>
 
