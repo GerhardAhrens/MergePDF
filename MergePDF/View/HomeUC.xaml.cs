@@ -67,6 +67,12 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
+        public string WindowDescription
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         #endregion Properties
 
         #region Windows Events
@@ -74,6 +80,7 @@ namespace MergePDF.View
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.WindowTitel = LocalizationValue.Get("WindowsTitelZeile");
+            this.WindowDescription = LocalizationValue.Get("WindowDescription");
 
             if (App.EventAgg.IsSubscription<StatusEvent>() == true)
             {

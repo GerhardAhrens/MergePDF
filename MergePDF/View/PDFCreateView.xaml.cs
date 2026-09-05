@@ -53,6 +53,18 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
+        public string CreateFilename
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
+        public string ImageInfo
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         private MessageBase Message { get; } = new MessageBase();
         private ApplicationSettings Settings { get; set; }

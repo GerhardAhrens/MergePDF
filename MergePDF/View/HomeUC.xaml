@@ -228,7 +228,7 @@
             VerticalAlignment="Center"
             FontSize="28"
             FontWeight="Bold"
-            Text="{Binding Path=WindowTitel, FallbackValue=~WindowTitel}"
+            Text="{Binding Path=WindowDescription, FallbackValue=~WindowDescription}"
             TextWrapping="WrapWithOverflow" />
 
     </Grid>

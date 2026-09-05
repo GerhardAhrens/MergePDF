@@ -233,6 +233,7 @@
             </Canvas>
             <!--#endregion Drag and Drop Line Overlay-->
 
+            <!--#region Image-->
             <ScrollViewer
                 Grid.Row="0"
                 Grid.Column="1"
@@ -246,7 +247,7 @@
                     RenderOptions.EdgeMode="Aliased"
                     Stretch="None" />
             </ScrollViewer>
-
+            <!--#endregion Image-->
         </Grid>
     </Grid>
 </base:UserControlBase>

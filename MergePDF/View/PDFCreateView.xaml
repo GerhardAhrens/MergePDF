@@ -65,8 +65,49 @@
                     <Image Source="{StaticResource ResourceKey=IconOffice_Folder_open_64}" Stretch="Uniform" />
                 </Button>
 
+                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                    <Run Text="Anzahl Images" />
+                    <Run Text=":" />
+                    <Run Text="{Binding Path=ImageInfo, FallbackValue=0}" />
+                </TextBlock>
+
+                <Border
+                    Width="1"
+                    Margin="5,0,0,0"
+                    Background="Gray" />
+
+                <base:ChooseBox
+                    Title="Merge PDF speichern unter ..."
+                    Width="300"
+                    Height="25"
+                    Margin="5,0,0,0"
+                    ChooseBoxType="SaveFile"
+                    DefaultExtension="Images|*.png"
+                    ExtensionFilter="Images|*.png"
+                    Text="{Binding Path=CreateFilename, FallbackValue=~CreateFilename}" />
+
+                <Button
+                    Width="{StaticResource ResourceKey=ButtonSize}"
+                    Height="{StaticResource ResourceKey=ButtonSize}"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Command="{Binding Path=SavePDFCommand}"
+                    CommandParameter="{x:Static core:CommandButtons.SavePDF}"
+                    ToolTip="PDF speichern">
+                    <Image Source="{StaticResource ResourceKey=IconOffice_Save_as_PDF_64}" Stretch="Uniform" />
+                </Button>
+
             </DockPanel>
         </GroupBox>
+
+        <Grid
+            Grid.Row="1"
+            Grid.Column="0"
+            ColumnDefinitions="Auto,*"
+            RowDefinitions="*">
+            <TextBlock />
+        </Grid>
 
         <!--#endregion Hauptmenübar-->
     </Grid>
