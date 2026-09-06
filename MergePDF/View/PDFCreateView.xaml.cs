@@ -21,10 +21,13 @@ namespace MergePDF.View
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Media;
+    using System.Windows.Media.Imaging;
 
     using MergePDF.Core;
 
     using Microsoft.Win32;
+
+    using PdfSharpCore.Pdf;
 
     /// <summary>
     /// Interaktionslogik für PDFCreateView.xaml
@@ -43,6 +46,8 @@ namespace MergePDF.View
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
             this.OpenFolderCommand = new CommandBase(commandParam => this.OnOpenFolder(commandParam), () => true);
+            this.SavePDFCommand = new CommandBase(commandParam => this.OnSavePDF(commandParam), () => true);
+
 
             this.DataContext = this;
         }
@@ -50,6 +55,7 @@ namespace MergePDF.View
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase OpenFolderCommand { get; private set; }
+        public CommandBase SavePDFCommand { get; private set; }
 
         public ObservableCollection<PDFFileItem> ImageFilesSource
         {
@@ -110,7 +116,12 @@ namespace MergePDF.View
         #region ListBox Events
         private void SelectedImageFileHandler(PDFFileItem item, string arg2)
         {
-            //this.LoadPdf(item.Fullname);
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(item.Fullname, UriKind.Absolute);
+            bitmap.EndInit();
+
+            DefaultImage.Source = bitmap;
         }
 
         private void ListBoxFiles_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -300,6 +311,50 @@ namespace MergePDF.View
             }
         }
 
+        private async void OnSavePDF(object commandParam)
+        {
+            string mergePath = string.Empty;
+            if (string.IsNullOrEmpty(this.CreateFilename) == true)
+            {
+                this.Message.Hinweis("PDF Speichern", "Bitte geben Sie einen Dateinamen ein.");
+                return;
+            }
+
+            if (this.ImageFilesSource.Count(f => f.IsSelectedItem == true) == 0)
+            {
+                this.Message.Hinweis("PDF Speichern", "Bitte wählen Sie mindestens eine PDF-Datei aus.");
+                return;
+            }
+
+            if (commandParam != null && commandParam is CommandButtons button)
+            {
+                if (button == CommandButtons.SavePDF)
+                {
+                    var selectedFile = this.ImageFilesSource.Where(f => f.IsSelectedItem == true).ToList();
+                    if (selectedFile != null && selectedFile.Count > 0)
+                    {
+                        this.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Wait);
+
+                        using (var targetDoc = new PdfDocument())
+                        {
+                            foreach (var file in selectedFile)
+                            {
+                                string imageName = file.Fullname;
+                                mergePath = Path.GetDirectoryName(imageName);
+                                if (File.Exists(imageName) == false)
+                                {
+                                    continue;
+                                }
+
+                            }
+                        }
+
+                        this.Dispatcher.Invoke(() => Mouse.OverrideCursor = null);
+                    }
+                }
+            }
+
+        }
         #endregion Command Events
 
 

@@ -193,6 +193,22 @@
             </Canvas>
             <!--#endregion Drag and Drop Line Overlay-->
 
+            <!--#region Image-->
+            <ScrollViewer
+                Grid.Row="0"
+                Grid.Column="1"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto">
+                <Image
+                    x:Name="DefaultImage"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    RenderOptions.EdgeMode="Aliased"
+                    Stretch="None" />
+            </ScrollViewer>
+            <!--#endregion Image-->
+
         </Grid>
 
         <!--#endregion Hauptmenübar-->
