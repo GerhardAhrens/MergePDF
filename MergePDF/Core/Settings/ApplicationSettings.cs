@@ -10,5 +10,6 @@
         public string FileSuffix { get; set; }
         public string LastScanFolder { get; set; }
         public string NetworkScanner { get; set; }
+        public bool DefaultPDFReader { get; set; }
     }
 }
