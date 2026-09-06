@@ -356,7 +356,17 @@ namespace MergePDF.View
 
             PDFFileItem fitem;
             List<PDFFileItem> files = new();
-            IEnumerable<string> filesFolder = Directory.EnumerateFiles(folderPath, "*.png", SearchOption.AllDirectories);
+
+            // Optionen definieren (z. B. Unterverzeichnisse durchsuchen und Zugriffsfehler ignorieren)
+            var enumerationOptions = new EnumerationOptions
+            {
+                RecurseSubdirectories = true,
+                IgnoreInaccessible = true
+            };
+
+            string[] erlaubteEndungen = { ".png", ".jpg", ".bmp", ".tif" };
+            IEnumerable<string> filesFolder = Directory.EnumerateFiles(folderPath, "*.*", enumerationOptions);
+            filesFolder = filesFolder.Where(f => erlaubteEndungen.Contains(Path.GetExtension(f).ToLower()));
             if (filesFolder != null && filesFolder.Any() == true)
             {
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
