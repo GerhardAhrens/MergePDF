@@ -329,7 +329,7 @@ namespace MergePDF.View
 
         private void ListBoxFiles_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            _dragStartPoint = e.GetPosition(null);
+            this._dragStartPoint = e.GetPosition(null);
         }
 
         private void ListBoxFiles_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)

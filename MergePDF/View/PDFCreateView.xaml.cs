@@ -19,6 +19,8 @@ namespace MergePDF.View
     using System.IO;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Input;
+    using System.Windows.Media;
 
     using MergePDF.Core;
 
@@ -29,6 +31,8 @@ namespace MergePDF.View
     /// </summary>
     public partial class PDFCreateView : UserControlBase
     {
+        private Point _dragStartPoint;
+
         public PDFCreateView(ChangeViewEventArgs args) : base(typeof(PDFCreateView))
 
         {
@@ -53,6 +57,18 @@ namespace MergePDF.View
             set => base.SetValue(value);
         }
 
+        public PDFFileItem SelectedImageFile
+        {
+            get => base.GetValue<PDFFileItem>();
+            set => base.SetValue(value, this.SelectedImageFileHandler);
+        }
+
+        public string DragDropTooltipText
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         public string CreateFilename
         {
             get => base.GetValue<string>();
@@ -60,6 +76,12 @@ namespace MergePDF.View
         }
 
         public string ImageInfo
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
+        public string FileSizeTooltip
         {
             get => base.GetValue<string>();
             set => base.SetValue(value);
@@ -75,12 +97,166 @@ namespace MergePDF.View
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            string dfFolder = string.IsNullOrEmpty(App.Settings.LastScanFolder) == false ? App.Settings.LastScanFolder : string.Empty;
+            this.LoadFileToListbox(dfFolder);
+
             if (App.EventAgg.IsSubscription<StatusEvent>() == true)
             {
                 await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
             }
         }
         #endregion Windows Events
+
+        #region ListBox Events
+        private void SelectedImageFileHandler(PDFFileItem item, string arg2)
+        {
+            //this.LoadPdf(item.Fullname);
+        }
+
+        private void ListBoxFiles_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this._dragStartPoint = e.GetPosition(null);
+        }
+
+        private void ListBoxFiles_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+
+            Point mousePos = e.GetPosition(null);
+            Vector diff = this._dragStartPoint - mousePos;
+
+            if (Math.Abs(diff.X) < SystemParameters.MinimumHorizontalDragDistance &&
+                Math.Abs(diff.Y) < SystemParameters.MinimumVerticalDragDistance)
+                return;
+
+            ListBox listBox = sender as ListBox;
+
+            if (listBox.SelectedItem == null)
+                return;
+
+
+            this.DragDropTooltipText = ((PDFFileItem)listBox.SelectedItem).Filename;
+            this.FileSizeTooltip = ((PDFFileItem)listBox.SelectedItem).FileSize;
+            this.DragDropPopup.IsOpen = true;
+
+            DragDrop.DoDragDrop(listBox, listBox.SelectedItem, DragDropEffects.Move);
+        }
+
+        private void ListBoxFiles_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.Move;
+
+            Point p = e.GetPosition(this);
+            this.DragDropPopup.HorizontalOffset = p.X + 15;
+            this.DragDropPopup.VerticalOffset = p.Y + 15;
+
+            /* Positionslinie */
+            var item = GetItemUnderMouse(e);
+
+            if (item == null)
+            {
+                this.InsertLine.Visibility = Visibility.Collapsed;
+                this.LeftArrow.Visibility = Visibility.Collapsed;
+                this.RightArrow.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            bool insertAbove = p.Y < item.ActualHeight / 2;
+
+            Point location = item.TranslatePoint(new Point(0, 0), this.DrogDropLineOverlay);
+
+            double y = insertAbove ? location.Y : location.Y + item.ActualHeight;
+
+            this.InsertLine.X1 = 0;
+            this.InsertLine.X2 = this.DrogDropLineOverlay.ActualWidth;
+
+            this.InsertLine.Y1 = y;
+            this.InsertLine.Y2 = y;
+
+            LeftArrow.Points = new PointCollection()
+            {
+                new Point(2, y),
+                new Point(10, y - 6),
+                new Point(10, y + 6)
+            };
+
+            double x = DrogDropLineOverlay.ActualWidth - 2;
+
+            RightArrow.Points = new PointCollection()
+            {
+                new Point(x, y),
+                new Point(x - 8, y - 6),
+                new Point(x - 8, y + 6)
+            };
+
+            this.InsertLine.Visibility = Visibility.Visible;
+            this.LeftArrow.Visibility = Visibility.Visible;
+            this.RightArrow.Visibility = Visibility.Visible;
+            e.Handled = true;
+        }
+
+        private void ListBoxFiles_Drop(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(typeof(PDFFileItem)))
+                return;
+
+            var droppedData = e.Data.GetData(typeof(PDFFileItem));
+
+            ListBox listBox = sender as ListBox;
+
+            var target = ((FrameworkElement)e.OriginalSource).DataContext;
+
+            if (target == null || droppedData == target)
+            {
+                return;
+            }
+
+            int oldIndex = this.ImageFilesSource.IndexOf((PDFFileItem)droppedData);
+
+            int newIndex;
+
+            if (target is not PDFFileItem)
+            {
+                newIndex = this.ImageFilesSource.Count - 1;
+            }
+            else
+            {
+                newIndex = this.ImageFilesSource.IndexOf((PDFFileItem)target);
+            }
+
+            if (oldIndex < 0 || newIndex < 0)
+            {
+                return;
+            }
+
+            this.DragDropPopup.IsOpen = false;
+            this.InsertLine.Visibility = Visibility.Collapsed;
+            this.LeftArrow.Visibility = Visibility.Collapsed;
+            this.RightArrow.Visibility = Visibility.Collapsed;
+            this.ImageFilesSource.Move(oldIndex, newIndex);
+        }
+
+        private void ListBoxFiles_DragLeave(object sender, DragEventArgs e)
+        {
+            this.InsertLine.Visibility = Visibility.Collapsed;
+            this.LeftArrow.Visibility = Visibility.Collapsed;
+            this.RightArrow.Visibility = Visibility.Collapsed;
+        }
+
+        private ListBoxItem GetItemUnderMouse(DragEventArgs e)
+        {
+            DependencyObject obj = this.ListBoxFiles.InputHitTest(e.GetPosition(this.ListBoxFiles)) as DependencyObject;
+
+            while (obj != null && obj is not ListBoxItem)
+            {
+                obj = VisualTreeHelper.GetParent(obj);
+            }
+
+            return obj as ListBoxItem;
+        }
+
+        #endregion ListBox Events
 
         #region Command Events
         private async void OnGoBack(object commandParam)
