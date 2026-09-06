@@ -115,8 +115,8 @@
                     Height="25"
                     Margin="5,0,0,0"
                     ChooseBoxType="SaveFile"
-                    DefaultExtension="Images|*.png"
-                    ExtensionFilter="Images|*.png"
+                    DefaultExtension="PDF File|*.pdf"
+                    ExtensionFilter="PDF File|*.pdf"
                     Text="{Binding Path=CreateFilename, FallbackValue=~CreateFilename}" />
 
                 <Button

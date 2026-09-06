@@ -27,6 +27,7 @@ namespace MergePDF.View
 
     using Microsoft.Win32;
 
+    using PdfSharpCore.Drawing;
     using PdfSharpCore.Pdf;
 
     /// <summary>
@@ -335,19 +336,7 @@ namespace MergePDF.View
                     {
                         this.Dispatcher.Invoke(() => Mouse.OverrideCursor = Cursors.Wait);
 
-                        using (var targetDoc = new PdfDocument())
-                        {
-                            foreach (var file in selectedFile)
-                            {
-                                string imageName = file.Fullname;
-                                mergePath = Path.GetDirectoryName(imageName);
-                                if (File.Exists(imageName) == false)
-                                {
-                                    continue;
-                                }
-
-                            }
-                        }
+                        PdfImageExporter.CreatePdf($"{this.CreateFilename}.pdf", selectedFile);
 
                         this.Dispatcher.Invoke(() => Mouse.OverrideCursor = null);
                     }
@@ -408,5 +397,140 @@ namespace MergePDF.View
 
             }
         }
+    }
+
+    public static class PdfImageExporter
+    { 
+        /// <summary> 
+        /// Erstellt aus mehreren Bilddateien eine PDF-Datei.Jede Bilddatei wird auf einer eigenen A4-Seite platziert. Bilder, 
+        /// die kleiner als der verfügbare Bereich sind, werden in ihrer Originalgröße übernommen. Größere Bilder werden proportional 
+        /// verkleinert. 
+        /// </summary>
+        /// <param name="outputPdfPath">Zielpfad der PDF-Datei.</param>
+        /// <param name="imagePaths">Liste der Bilddateien.</param>
+        /// <param name="marginMm">Seitenrand in Millimetern.</param> 
+        public static void CreatePdf( string outputPdfPath, List<PDFFileItem> imagePaths, double marginMm = 10)
+        { 
+            if (string.IsNullOrWhiteSpace(outputPdfPath))
+            {
+                throw new ArgumentException("Es wurde kein Ausgabepfad angegeben.", nameof(outputPdfPath));
+            }
+
+            if (imagePaths == null)
+            {
+                throw new ArgumentNullException(nameof(imagePaths));
+            }
+
+            if (marginMm < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(marginMm), "Der Rand darf nicht negativ sein.");
+            }
+
+            // A4 in PDF-Punkten 210 x 297 mm = 595.28 x 841.89 pt
+            const double pageWidth = 595.2756; 
+            const double pageHeight = 841.8898; 
+            double margin = MmToPoints(marginMm); 
+            double availableWidth = pageWidth - (2 * margin); 
+            double availableHeight = pageHeight - (2 * margin); 
+            
+            if (availableWidth <= 0 || availableHeight <= 0)
+            {
+                throw new ArgumentException("Der Seitenrand ist für A4 zu groß.", nameof(marginMm));
+            }
+
+            var document = new PdfDocument(); 
+            foreach (PDFFileItem imagePath in imagePaths)
+            { 
+                if (string.IsNullOrWhiteSpace(imagePath.Fullname))
+                {
+                    continue;
+                }
+                if (!File.Exists(imagePath.Fullname))
+                {
+                    throw new FileNotFoundException("Die Bilddatei wurde nicht gefunden.", imagePath.Fullname);
+                }
+
+                AddImagePage( document, imagePath.Fullname, availableWidth, availableHeight, pageWidth, pageHeight); 
+            }
+            
+            // Falls keine Bilder übergeben wurden,
+            // keine leere PDF erzeugen.
+            if (document.PageCount == 0)
+            {
+                throw new InvalidOperationException("Es wurden keine gültigen Bilder übergeben.");
+            }
+
+            document.Save(outputPdfPath); 
+        } 
+
+        private static void AddImagePage( PdfDocument document, string imagePath, double availableWidth, double availableHeight, double pageWidth, double pageHeight)
+        { 
+            var page = document.AddPage(); 
+            page.Size = PdfSharpCore.PageSize.A4; 
+            using var gfx = XGraphics.FromPdfPage(page); 
+
+            // WPF verwenden, um die tatsächliche Pixelgröße 
+            // und DPI-Information des Bildes zu ermitteln.
+            var bitmap = new BitmapImage(); 
+            bitmap.BeginInit(); 
+            bitmap.UriSource = new Uri( Path.GetFullPath(imagePath), UriKind.Absolute); 
+            bitmap.CacheOption = BitmapCacheOption.OnLoad; 
+            bitmap.EndInit(); bitmap.Freeze();
+            
+            // Bildgröße in PDF-Punkten bestimmen.
+            double imageWidth = PixelToPoints( bitmap.PixelWidth, bitmap.DpiX); 
+            double imageHeight = PixelToPoints( bitmap.PixelHeight, bitmap.DpiY);
+            
+            // Falls keine brauchbaren DPI vorhanden sind:
+            if (imageWidth <= 0)
+            {
+                imageWidth = bitmap.PixelWidth;
+            }
+
+            if (imageHeight <= 0)
+            {
+                imageHeight = bitmap.PixelHeight;
+            }
+
+            double drawWidth = imageWidth; double drawHeight = imageHeight;
+
+            // ---------------------------------------------------------
+            // Bild größer als der verfügbare A4-Bereich?
+            // Dann proportional verkleinern.
+            // ---------------------------------------------------------
+
+            if (imageWidth > availableWidth || imageHeight > availableHeight)
+            { 
+                double scaleX = availableWidth / imageWidth; 
+                double scaleY = availableHeight / imageHeight;
+                
+                // Der kleinere Faktor stellt sicher,
+                // dass das komplette Bild hineinpasst.
+                double scale = Math.Min(scaleX, scaleY); 
+                drawWidth = imageWidth * scale; 
+                drawHeight = imageHeight * scale; 
+            }
+            
+            // ---------------------------------------------------------
+            // Bild auf der Seite zentrieren
+            // ---------------------------------------------------------
+            double x = (pageWidth - drawWidth) / 2.0;
+            double y = (pageHeight - drawHeight) / 2.0; 
+            using var xImage = XImage.FromFile(imagePath); 
+            gfx.DrawImage( xImage, x, y, drawWidth, drawHeight); 
+        } 
+        
+        private static double PixelToPoints( int pixels, double dpi)
+        {
+            if (dpi <= 0) return pixels; 
+            
+            // 1 Inch = 72 PDF-Punkte
+            return pixels / dpi * 72.0; 
+        } 
+
+        private static double MmToPoints(double mm)
+        { 
+            return mm / 25.4 * 72.0; 
+        } 
     }
 }
