@@ -39,6 +39,10 @@ Das Scannnen erfolgt über WIA (Windows Image Acquisition) und hat somit keinen 
 WIA Ist COM-basiert, funktioniert mit vielen Scannern, hat aber auch seine Tücken für Netzwerk Scanner. Vor allem ist es schwer zu prüfen, ob eine Scanner auch tatsächlich betriebsbereit ist.
 ![Scan Dialog](ScanPDF.png)
 
+## Erstellen von PDF Dokumenten
+Über diesen Dialog können aus verschiedenen Bilddateien (jpg, png, bmp, tif) ein PDF Dokument erstellt werden. Die Reihenfolge der Bilder kann über Drag&Drop verändert werden.
+![Create Dialog](CreatePDF.png)
+
 # Hinweis
 Ein bearbeiten der PDF Datei (auch Notizen und Markierungen) ist mit diesem Tool nicht möglich. Es können nur PDF Dateien zusammengeführt, gesplittet oder extrahiert werden werden.
 # zusätzliche NuGet-Pakete
